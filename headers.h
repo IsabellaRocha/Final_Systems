@@ -21,3 +21,13 @@ union semun {
                               (Linux-specific) */
 };
 
+struct vehicle {
+  char * model;
+  char * color;
+  char * seatNumber;
+  int cost;
+}
+
+void display(char * choice);
+void rent();
+void logout();
