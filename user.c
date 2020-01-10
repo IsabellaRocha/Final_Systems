@@ -5,6 +5,7 @@ struct vehicle* rentedCars;
 
 int main() {
   char line[50];
+
   printf("Please choose whether you want to log in or create a new account:");
   while(strcmp(line, "exit") != 0) {
     fgets(line, 50, stdin);
