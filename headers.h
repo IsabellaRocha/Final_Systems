@@ -22,12 +22,26 @@ union semun {
 };
 
 struct vehicle {
-  char * model;
-  char * color;
-  char * seatNumber;
+  char[50] model;
+  char[20] color;
+  int seatNumber;
   int cost;
 }
 
+struct day {
+  int car1;
+  int car2;
+  int car3;
+}
+
+struct month {
+  int numDays;
+  struct day days[numDays];
+  char[20] name;
+}
+
+int makeUser();
 void display(char * choice);
 void rent();
 void logout();
+int verifyUser();
