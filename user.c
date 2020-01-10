@@ -5,7 +5,7 @@ struct vehicle* rentedCars;
 
 int main() {
   char line[50];
-  printf("Please choose whether you want to log in or create a new account:");
+  printf("Please choose whether you want to log in or create a new account: ");
   while(strcmp(line, "exit") != 0) {
     fgets(line, 50, stdin);
     display(line);
@@ -16,10 +16,24 @@ int main() {
 void display(char * choice) {
   char * newChoice = tolower(choice);
   if(strcmp(newChoice, "log in") == 0) {
-    printf("Username:");
+    printf("Username: ");
+    }
+    if(verifyUser(1)) {
+
+    }
   }
   if(strcmp(newChoice, "create new account") == 0) {
     printf("Username:");
+    if(makeUser()) {
+      printf("Password: ");
+      if(makePassword()) {
+        printf("Please type in your choice from the options listed below:
+        \n\n- View available cars (Select this if you also wish to rent a car)
+        \n- View rented cars
+        \n- View my account
+        \n- Log out");
+      }
+    }
   }
   if(strcmp(newChoice, "view available cars") == 0) {
     int idx = 0;
@@ -45,3 +59,33 @@ void display(char * choice) {
 void rent();
 
 void logout();
+
+int makeUser() {
+  int fd = open("users.txt", O_CREAT|O_TRUNC, 0744);
+  if (fd < 0) {
+    printf("Error: %s", strerror(errno));
+    return 1;
+  }
+  close(fd);
+  fd = open("users.txt", O_WRONLY|O_APPEND);
+  char input[SEG_SIZE];
+  fgets(input, SEG_SIZE, stdin);
+  strncat(input, ",");
+  write(fd, input, strlen(input));
+  close(fd);
+  return 1;
+}
+
+int makePassword() {
+  int fd = open("users.txt", O_WRONLY|O_APPEND);
+  char input[SEG_SIZE];
+  fgets(input, SEG_SIZE, stdin);
+  strncat(input, "\n");
+  write(fd, input, strlen(input));
+  close(fd);
+  return 1;
+}
+
+int verifyUser(int choice) {
+
+}
