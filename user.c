@@ -17,43 +17,47 @@ void display(char * choice) {
   char * newChoice = tolower(choice);
   if(strcmp(newChoice, "log in") == 0) {
     printf("Username: ");
-    }
-    if(verifyUser(1)) {
-
-    }
   }
-  if(strcmp(newChoice, "create new account") == 0) {
-    printf("Username:");
-    if(makeUser()) {
-      printf("Password: ");
-      if(makePassword()) {
-        printf("Please type in your choice from the options listed below:
-        \n\n- View available cars (Select this if you also wish to rent a car)
-        \n- View rented cars
-        \n- View my account
-        \n- Log out");
-      }
-    }
+  if(verifyUser()) {
+    printf("Please type in your choice from the options listed below:
+    \n\n- View available cars (Select this if you also wish to rent a car)
+    \n- View rented cars
+    \n- View my account
+    \n- Log out");
   }
-  if(strcmp(newChoice, "view available cars") == 0) {
-    int idx = 0;
-    for(idx; availableCars[idx] != NULL; idx++) {
-      printf("%s\n", availableCars[idx].model);
+}
+if(strcmp(newChoice, "create new account") == 0) {
+  printf("Username:");
+  if(makeUser()) {
+    printf("Password: ");
+    if(makePassword()) {
+      printf("Please type in your choice from the options listed below:
+      \n\n- View available cars (Select this if you also wish to rent a car)
+      \n- View rented cars
+      \n- View my account
+      \n- Log out");
     }
   }
-  if(strcmp(newChoice, "view rented cars") == 0) {
-    int idx = 0;
-    rent();
-    for(idx; rentedCars[idx] != NULL; idx++) {
-      printf("%s\n", rentCars[idx].model);
-    }
+}
+if(strcmp(newChoice, "view available cars") == 0) {
+  int idx = 0;
+  for(idx; availableCars[idx] != NULL; idx++) {
+    printf("%s\n", availableCars[idx].model);
   }
-  if(strcmp(newChoice, "view my account") == 0) {
+}
+if(strcmp(newChoice, "view rented cars") == 0) {
+  int idx = 0;
+  rent();
+  for(idx; rentedCars[idx] != NULL; idx++) {
+    printf("%s\n", rentCars[idx].model);
   }
-  if(strcmp(newChoice, "log out") == 0) {
-    logout();
-    printf("Please choose whether you want to log in or create a new account:");
-  }
+}
+if(strcmp(newChoice, "view my account") == 0) {
+}
+if(strcmp(newChoice, "log out") == 0) {
+  logout();
+  printf("Please choose whether you want to log in or create a new account:");
+}
 }
 
 void rent();
@@ -86,6 +90,27 @@ int makePassword() {
   return 1;
 }
 
-int verifyUser(int choice) {
-
+int verifyUser() {
+  int fd = open("users.txt", O_RDONLY);
+  if(fd < 0) {
+    printf("Error: %s", strerror(errno));
+    return 1;
+  }
+  char check[SEG_SIZE];
+  check[0] = '\0';
+  read(fd, check, SEG_SIZE);
+  if (strlen(check) != 0) {
+    *(strrchr(check, '\n') + 1) = '\0';
+  }
+  char input[SEG_SIZE];
+  fgets(input, SEG_SIZE, stdin);
+  if(strstr(input, check) != NULL) {
+    printf("Password: ");
+    char input2[SEG_SIZE];
+    fgets(input2, SEG_SIZE, stdin);
+    if(strstr(input2, check) != NULL) {
+      return 1;
+    }
+  }
+  return 0;
 }
