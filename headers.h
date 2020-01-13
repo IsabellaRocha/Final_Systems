@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <conio.h>
+#include<ctype.h>
 
 #include <sys/ipc.h>
 #include <sys/sem.h>
@@ -23,25 +23,26 @@ union semun {
 };
 
 struct vehicle {
-  char[50] model;
-  char[20] color;
+  char model[50];
+  char color[20];
   int seatNumber;
   int cost;
-}
+};
 
 struct day {
   int car1;
   int car2;
   int car3;
-}
+};
 
-struct month {
+/*struct month {
   int numDays;
   struct day days[numDays];
-  char[20] name;
-}
+  char name[20];
+}; */
 
 int makeUser();
+int makePassword();
 void display(char * choice);
 void rent();
 void logout();

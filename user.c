@@ -4,69 +4,67 @@ struct vehicle* availableCars;
 struct vehicle* rentedCars;
 
 int main() {
+  system("clear");
   char line[50];
   printf("Please choose whether you want to log in or create a new account: ");
   while(strcmp(line, "exit") != 0) {
     fgets(line, 50, stdin);
+    char * checker;
+    if ((checker = strchr(line, '\n')) != NULL) {
+      *checker = '\0';
+    }
     display(line);
   }
   return 0;
 }
 
 void display(char * choice) {
-  char * newChoice = tolower(choice);
+  printf("hey");
+  char * newChoice = choice;
+  printf("%s", newChoice);
   if(strcmp(newChoice, "log in") == 0) {
-    clrscr(); //Clears output screen, from conio.h
+    system("clear"); //Clears output screen, from conio.h
     printf("Username: ");
   }
   if(verifyUser()) {
-    clrscr();
-    printf("Please type in your choice from the options listed below:
-    \n\n- View available cars (Select this if you also wish to rent a car)
-    \n- View rented cars
-    \n- View my account
-    \n- Log out");
+    system("clear");
+    printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out");
   }
-}
-if(strcmp(newChoice, "create new account") == 0) {
-  clrscr();
-  printf("Username:");
-  if(makeUser()) {
-    clrscr();
-    printf("Password: ");
-    if(makePassword()) {
-      clrscr();
-      printf("Please type in your choice from the options listed below:
-      \n\n- View available cars (Select this if you also wish to rent a car)
-      \n- View rented cars
-      \n- View my account
-      \n- Log out");
+  if(strcmp(newChoice, "create new account") == 0) {
+    system("clear");
+    printf("Username:");
+    if(makeUser()) {
+      system("clear");
+      printf("Password: ");
+      if(makePassword()) {
+        system("clear");
+        printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out");
+      }
+    }
+  }/*
+  if(strcmp(newChoice, "view available cars") == 0) {
+    system("clear");
+    int idx = 0;
+    for(idx; availableCars[idx] != NULL; idx++) {
+      printf("%s\n", availableCars[idx].model);
     }
   }
-}
-if(strcmp(newChoice, "view available cars") == 0) {
-  clrscr();
-  int idx = 0;
-  for(idx; availableCars[idx] != NULL; idx++) {
-    printf("%s\n", availableCars[idx].model);
+  if(strcmp(newChoice, "view rented cars") == 0) {
+    system("clear");
+    int idx = 0;
+    rent();
+    for(idx; rentedCars[idx] != NULL; idx++) {
+      printf("%s\n", rentCars[idx].model);
+    }
   }
-}
-if(strcmp(newChoice, "view rented cars") == 0) {
-  clrscr();
-  int idx = 0;
-  rent();
-  for(idx; rentedCars[idx] != NULL; idx++) {
-    printf("%s\n", rentCars[idx].model);
+  if(strcmp(newChoice, "view my account") == 0) {
+    system("clear");
   }
-}
-if(strcmp(newChoice, "view my account") == 0) {
-  clrscr();
-}
-if(strcmp(newChoice, "log out") == 0) {
-  clrscr();
-  logout();
-  printf("Please choose whether you want to log in or create a new account:");
-}
+  if(strcmp(newChoice, "log out") == 0) {
+    system("clear");
+    logout();
+    printf("Please choose whether you want to log in or create a new account:");
+  }*/
 }
 
 void rent();
@@ -83,7 +81,7 @@ int makeUser() {
   fd = open("users.txt", O_WRONLY|O_APPEND);
   char input[SEG_SIZE];
   fgets(input, SEG_SIZE, stdin);
-  strncat(input, ",");
+  strncat(input, ",", 1);
   write(fd, input, strlen(input));
   close(fd);
   return 1;
@@ -93,7 +91,7 @@ int makePassword() {
   int fd = open("users.txt", O_WRONLY|O_APPEND);
   char input[SEG_SIZE];
   fgets(input, SEG_SIZE, stdin);
-  strncat(input, "\n");
+  strncat(input, "\n", 1);
   write(fd, input, strlen(input));
   close(fd);
   return 1;
@@ -114,7 +112,7 @@ int verifyUser() {
   char input[SEG_SIZE];
   fgets(input, SEG_SIZE, stdin);
   if(strstr(input, check) != NULL) {
-    clrscr();
+    system("clear");
     printf("Password: ");
     char input2[SEG_SIZE];
     fgets(input2, SEG_SIZE, stdin);
