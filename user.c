@@ -16,9 +16,11 @@ int main() {
 void display(char * choice) {
   char * newChoice = tolower(choice);
   if(strcmp(newChoice, "log in") == 0) {
+    clrscr(); //Clears output screen, from conio.h
     printf("Username: ");
   }
   if(verifyUser()) {
+    clrscr();
     printf("Please type in your choice from the options listed below:
     \n\n- View available cars (Select this if you also wish to rent a car)
     \n- View rented cars
@@ -27,10 +29,13 @@ void display(char * choice) {
   }
 }
 if(strcmp(newChoice, "create new account") == 0) {
+  clrscr();
   printf("Username:");
   if(makeUser()) {
+    clrscr();
     printf("Password: ");
     if(makePassword()) {
+      clrscr();
       printf("Please type in your choice from the options listed below:
       \n\n- View available cars (Select this if you also wish to rent a car)
       \n- View rented cars
@@ -40,12 +45,14 @@ if(strcmp(newChoice, "create new account") == 0) {
   }
 }
 if(strcmp(newChoice, "view available cars") == 0) {
+  clrscr();
   int idx = 0;
   for(idx; availableCars[idx] != NULL; idx++) {
     printf("%s\n", availableCars[idx].model);
   }
 }
 if(strcmp(newChoice, "view rented cars") == 0) {
+  clrscr();
   int idx = 0;
   rent();
   for(idx; rentedCars[idx] != NULL; idx++) {
@@ -53,8 +60,10 @@ if(strcmp(newChoice, "view rented cars") == 0) {
   }
 }
 if(strcmp(newChoice, "view my account") == 0) {
+  clrscr();
 }
 if(strcmp(newChoice, "log out") == 0) {
+  clrscr();
   logout();
   printf("Please choose whether you want to log in or create a new account:");
 }
@@ -105,6 +114,7 @@ int verifyUser() {
   char input[SEG_SIZE];
   fgets(input, SEG_SIZE, stdin);
   if(strstr(input, check) != NULL) {
+    clrscr();
     printf("Password: ");
     char input2[SEG_SIZE];
     fgets(input2, SEG_SIZE, stdin);

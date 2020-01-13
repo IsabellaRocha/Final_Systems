@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <conio.h>
 
 #include <sys/ipc.h>
 #include <sys/sem.h>
