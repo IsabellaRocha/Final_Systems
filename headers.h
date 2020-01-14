@@ -4,7 +4,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include<ctype.h>
+#include <ctype.h>
+#include <stdbool.h>
 
 #include <sys/ipc.h>
 #include <sys/sem.h>
@@ -43,8 +44,9 @@ struct day {
 
 int makeUser();
 int makePassword();
-void display(char * choice);
+int display(char * choice);
 void rent();
 void logout();
 int verifyUser();
 char ** parse_args(char * line, char * delimiter);
+char * removeSpace(char * line);
