@@ -47,3 +47,4 @@ void display(char * choice);
 void rent();
 void logout();
 int verifyUser();
+char ** parse_args(char * line, char * delimiter);

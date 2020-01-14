@@ -18,6 +18,23 @@ int main() {
   return 0;
 }
 
+char ** parse_args( char * line, char * delimiter ){ //For reading through the txt file of users
+    char * parse = removeSpace(line);
+    char ** args = malloc(50 * sizeof(char *));
+    int c = 0;
+    char * token;
+    while (parse != NULL){
+        token = strsep(&parse, delimiter);
+        args[c] = token;
+        c++;
+    }
+    for (;c <= 10 - 1; c++){
+        args[c] = NULL;
+    }
+    free(parse);
+    return args;
+}
+
 void display(char * choice) {
   printf("%s", choice);
   if(strcmp(choice, "log in") == 0) {
