@@ -74,22 +74,31 @@ strcpy(parse, newLine);
 return parse;
 }
 
+void displayMenu() {
+  printf("\x1b[H\x1b[J");
+  printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out\n\n");
+}
 void display(char * choice) {
   if(strcmp(choice, "log in") == 0) {
     printf("\x1b[H\x1b[J");
     printf("Username: ");
     if(verifyUser()) {
-      printf("\x1b[H\x1b[J");
-      printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out\n\n");
+      displayMenu();
     }
   }
   if(strcmp(choice, "create new account") == 0) {
     printf("\x1b[H\x1b[J");
     printf("Username: ");
     if(makeUser()) {
-      printf("\x1b[H\x1b[J");
-      printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out\n\n");
+      displayMenu();
     }
+  }
+  if(strcmp(choice, "view my account") == 0) {
+    printf("\x1b[H\x1b[J");
+    viewAccount();
+  }
+  if(strcmp(choice, "back") == 0) {
+    displayMenu();
   }/*
   if(strcmp(choice, "view available cars") == 0) {
     printf("\x1b[H\x1b[J");
@@ -106,9 +115,7 @@ void display(char * choice) {
       printf("%s\n", rentCars[idx].model);
     }
   }
-  if(strcmp(choice, "view my account") == 0) {
-    printf("\x1b[H\x1b[J");
-  }
+
   if(strcmp(choice, "log out") == 0) {
     printf("\x1b[H\x1b[J");
     logout();
@@ -197,18 +204,9 @@ int verifyUser() {
   return 0;
 }
 
-int viewAccount() {
-  char ** userID;
-  int fd = open("users.txt", O_RDONLY);
-  if(fd < 0) {
-    printf("Error: %s", strerror(errno));
-    return 1;
-  }
-  char check[SEG_SIZE];
-  check[0] = '\0';
-  read(fd, check, SEG_SIZE);
-  userID = parse_args(check, ",");
-  if (strlen(check) != 0) {
-    *(strrchr(check, '\n') + 1) = '\0';
-  }
+void viewAccount() {
+  printf("Username: %s\n", me.username);
+  printf("Password: %s\n", me.password);
+  printf("Current car: %s\n", me.rented);
+  printf("Type 'back' to go back to the menu\n\n");
 }

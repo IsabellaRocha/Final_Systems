@@ -51,9 +51,11 @@ struct users {
 int makeUser();
 int makePassword();
 void display(char * choice);
+void displayMenu();
 void rent();
 void logout();
 int verifyUser();
+void viewAccount();
 char ** parse_args(char * line, char * delimiter);
 char * removeSpace(char * line);
 /*int setUpCars();
