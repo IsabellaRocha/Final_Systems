@@ -28,6 +28,7 @@ char ** parse_args( char * line, char * delimiter ){ //For reading through the t
     char * token;
     while (parse != NULL){
         token = strsep(&parse, delimiter);
+    //    printf("%s\n", token);
         args[c] = token;
         c++;
     }
@@ -155,7 +156,6 @@ int makeUser() {
   printf("Password: ");
   char input2[SEG_SIZE];
   fgets(input2, SEG_SIZE, stdin);
-  strncat(input, ",", 1);
   write(fd, input2, strlen(input2));
   close(fd);
   return 1;
@@ -181,6 +181,7 @@ int verifyUser() {
   if ((checker = strchr(input, '\n')) != NULL) {
     *checker = '\0';
   }
+//  printf("test");
   int idx = 0;
   while(userID[idx] != NULL) {
     char **args = parse_args(userID[idx], ",");
@@ -197,6 +198,7 @@ int verifyUser() {
         return 1;
       }
     }
+    idx++;
   }
   printf("\x1b[H\x1b[J");
   return 0;
