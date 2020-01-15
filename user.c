@@ -3,6 +3,7 @@
 struct vehicle* availableCars;
 struct vehicle* rentedCars;
 struct users me;
+bool running = true;
 
 int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
@@ -10,8 +11,8 @@ int main() {
   memset(me.username, '\0', 20); //Sets all values to null
   memset(me.password, '\0', 20);
   memset(me.rented, '\0', 50);
-  printf("Please choose whether you want to log in or create a new account\n\n");
-  while(strcmp(line, "exit") != 0) {
+  printf("Please choose whether you want to log in, create a new account, or exit the program\n\n- Log in\n- Create new account\n- Exit\n\n");
+  while(running) {
     printf("Type choice here: ");
     fgets(line, 50, stdin);
     printf("\x1b[H\x1b[J");
@@ -27,6 +28,7 @@ int main() {
 char ** parse_args( char * line, char * delimiter ){ //For reading through the txt file of users
     char * parse = removeSpace(line);
     char ** args = malloc(1000 * sizeof(char *));
+  //  char * args[1000];
     int c = 0;
     char * token;
     while (parse != NULL){
@@ -34,16 +36,14 @@ char ** parse_args( char * line, char * delimiter ){ //For reading through the t
         args[c] = token;
         c++;
     }
-    for (;c <= 10 - 1; c++){
-        args[c] = NULL;
-    }
+    args[c] = NULL;
     free(parse);
     return args;
 }
 
 char * removeSpace(char * line) {
-    char arg[50];
-    char newLine[50];
+    char arg[1000];
+    char newLine[1000];
     strcpy(arg, line);
     int idx = 0;
     int cur = 0;
@@ -82,28 +82,32 @@ void displayMenu() {
   printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out\n\n");
 }
 void display(char * choice) {
-  if(strcmp(choice, "log in") == 0) {
+  char * newChoice = removeSpace(choice);
+  if(strcmp(newChoice, "exit") == 0) {
+    running = false;
+  }
+  if(strcmp(newChoice, "log in") == 0) {
     printf("\x1b[H\x1b[J");
     printf("Username: ");
     if(verifyUser()) {
       displayMenu();
     }
   }
-  if(strcmp(choice, "create new account") == 0) {
+  if(strcmp(newChoice, "create new account") == 0) {
     printf("\x1b[H\x1b[J");
     printf("Username: ");
     if(makeUser()) {
       displayMenu();
     }
   }
-  if(strcmp(choice, "view my account") == 0) {
+  if(strcmp(newChoice, "view my account") == 0) {
     printf("\x1b[H\x1b[J");
     viewAccount();
   }
-  if(strcmp(choice, "back") == 0) {
+  if(strcmp(newChoice, "back") == 0) {
     displayMenu();
   }
-  if(strcmp(choice, "log out") == 0) {
+  if(strcmp(newChoice, "log out") == 0) {
     printf("\x1b[H\x1b[J");
     logout();
   }/*
@@ -132,7 +136,7 @@ void logout() {
   memset(me.username, '\0', 20);
   memset(me.password, '\0', 20);
   memset(me.rented, '\0', 50);
-  printf("Please choose whether you want to log in or create a new account\n\n");
+  printf("Please choose whether you want to log in, create a new account, or exit the program\n\n- Log in\n- Create new account\n- Exit\n\n");
 }
 
 int makeUser() {
@@ -206,7 +210,8 @@ int verifyUser() {
     idx++;
   }
   printf("\x1b[H\x1b[J");
-  printf("Invalid account, please choose whether you want to log in or create a new account again\n\n");
+  printf("Invalid account\n\n");
+  printf("Please choose whether you want to log in, create a new account, or exit the program\n\n- Log in\n- Create new account\n- Exit\n\n");
   return 0;
 }
 
