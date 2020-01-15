@@ -26,7 +26,7 @@ int main() {
 
 char ** parse_args( char * line, char * delimiter ){ //For reading through the txt file of users
     char * parse = removeSpace(line);
-    char ** args = malloc(50 * sizeof(char *));
+    char ** args = malloc(1000 * sizeof(char *));
     int c = 0;
     char * token;
     while (parse != NULL){
@@ -122,7 +122,6 @@ void display(char * choice) {
       printf("%s\n", rentCars[idx].model);
     }
   }
-
   }*/
 }
 
