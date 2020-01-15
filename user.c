@@ -7,9 +7,9 @@ struct users me;
 int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
   char line[50];
-  memset(me.username, '\0', 20);
+  memset(me.username, '\0', 20); //Sets all values to null
   memset(me.password, '\0', 20);
-  memset(me.rented, '\0', 20);
+  memset(me.rented, '\0', 50);
   printf("Please choose whether you want to log in or create a new account\n\n");
   while(strcmp(line, "exit") != 0) {
     printf("Type choice here: ");
@@ -132,7 +132,7 @@ void rent();
 void logout() {
   memset(me.username, '\0', 20);
   memset(me.password, '\0', 20);
-  memset(me.rented, '\0', 20);
+  memset(me.rented, '\0', 50);
   printf("Please choose whether you want to log in or create a new account\n\n");
 }
 
