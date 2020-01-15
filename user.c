@@ -28,7 +28,6 @@ char ** parse_args( char * line, char * delimiter ){ //For reading through the t
     char * token;
     while (parse != NULL){
         token = strsep(&parse, delimiter);
-    //    printf("%s\n", token);
         args[c] = token;
         c++;
     }
@@ -77,22 +76,11 @@ return parse;
 
 void display(char * choice) {
   if(strcmp(choice, "log in") == 0) {
-  //  printf("\x1b[H\x1b[J");
+    printf("\x1b[H\x1b[J");
     printf("Username: ");
     if(verifyUser()) {
       printf("\x1b[H\x1b[J");
       printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out\n\n");
-    }
-    if(!verifyUser()) {
-      char line[50];
-      printf("Please choose whether you want to log in or create a new account: ");
-      fgets(line, 50, stdin);
-      printf("\x1b[H\x1b[J");
-      char * checker;
-      if ((checker = strchr(line, '\n')) != NULL) {
-        *checker = '\0';
-      }
-      display(line);
     }
   }
   if(strcmp(choice, "create new account") == 0) {
@@ -152,11 +140,13 @@ int makeUser() {
   }
   strncat(input, ",", 1);
   write(fd, input, strlen(input));
+  strcpy(me.username, input);
   printf("\x1b[H\x1b[J");
   printf("Password: ");
   char input2[SEG_SIZE];
   fgets(input2, SEG_SIZE, stdin);
   write(fd, input2, strlen(input2));
+  strcpy(me.password, input2);
   close(fd);
   return 1;
 }
@@ -181,7 +171,6 @@ int verifyUser() {
   if ((checker = strchr(input, '\n')) != NULL) {
     *checker = '\0';
   }
-//  printf("test");
   int idx = 0;
   while(userID[idx] != NULL) {
     char **args = parse_args(userID[idx], ",");
@@ -195,12 +184,16 @@ int verifyUser() {
         *checker = '\0';
       }
       if(strcmp(input2, args[1]) == 0) {
+        strcpy(me.username, input);
+        strcpy(me.password, input2);
+        printf("%s\n%s\n", me.username, me.password);
         return 1;
       }
     }
     idx++;
   }
   printf("\x1b[H\x1b[J");
+  printf("Invalid account, please choose whether you want to log in or create a new account again\n\n");
   return 0;
 }
 

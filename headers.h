@@ -56,7 +56,7 @@ void logout();
 int verifyUser();
 char ** parse_args(char * line, char * delimiter);
 char * removeSpace(char * line);
-int setUpCars();
+/*int setUpCars();
 int viewCars()
 int removeCars();
-int execute();
+int execute();*/
