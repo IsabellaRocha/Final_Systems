@@ -7,6 +7,9 @@ struct users me;
 int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
   char line[50];
+  memset(me.username, '\0', 20);
+  memset(me.password, '\0', 20);
+  memset(me.rented, '\0', 20);
   printf("Please choose whether you want to log in or create a new account\n\n");
   while(strcmp(line, "exit") != 0) {
     printf("Type choice here: ");
@@ -99,6 +102,10 @@ void display(char * choice) {
   }
   if(strcmp(choice, "back") == 0) {
     displayMenu();
+  }
+  if(strcmp(choice, "log out") == 0) {
+    printf("\x1b[H\x1b[J");
+    logout();
   }/*
   if(strcmp(choice, "view available cars") == 0) {
     printf("\x1b[H\x1b[J");
@@ -116,17 +123,18 @@ void display(char * choice) {
     }
   }
 
-  if(strcmp(choice, "log out") == 0) {
-    printf("\x1b[H\x1b[J");
-    logout();
-    printf("Please choose whether you want to log in or create a new account:");
   }*/
 }
 
 
 void rent();
 
-void logout();
+void logout() {
+  memset(me.username, '\0', 20);
+  memset(me.password, '\0', 20);
+  memset(me.rented, '\0', 20);
+  printf("Please choose whether you want to log in or create a new account\n\n");
+}
 
 int makeUser() {
   if(fopen("users.txt", "r") == NULL) {
@@ -193,7 +201,6 @@ int verifyUser() {
       if(strcmp(input2, args[1]) == 0) {
         strcpy(me.username, input);
         strcpy(me.password, input2);
-        printf("%s\n%s\n", me.username, me.password);
         return 1;
       }
     }
