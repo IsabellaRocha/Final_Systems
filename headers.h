@@ -36,6 +36,12 @@ struct day {
   int car3;
 };
 
+struct users {
+  char username[20];
+  char password[20];
+  char rented[50];
+};
+
 /*struct month {
   int numDays;
   struct day days[numDays];
@@ -44,7 +50,7 @@ struct day {
 
 int makeUser();
 int makePassword();
-int display(char * choice);
+void display(char * choice);
 void rent();
 void logout();
 int verifyUser();

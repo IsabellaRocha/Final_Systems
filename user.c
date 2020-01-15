@@ -2,23 +2,21 @@
 
 struct vehicle* availableCars;
 struct vehicle* rentedCars;
-char ** me;
+struct users me;
 
 int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
   char line[50];
+  printf("Please choose whether you want to log in or create a new account\n\n");
   while(strcmp(line, "exit") != 0) {
-    printf("Please choose whether you want to log in or create a new account: ");
+    printf("Type choice here: ");
     fgets(line, 50, stdin);
     printf("\x1b[H\x1b[J");
     char * checker;
     if ((checker = strchr(line, '\n')) != NULL) {
       *checker = '\0';
     }
-    int run = display(line);
-    if (run == 0) {
-      printf("Not a valid option\n");
-    }
+    display(line);
   }
   return 0;
 }
@@ -76,7 +74,7 @@ strcpy(parse, newLine);
 return parse;
 }
 
-int display(char * choice) {
+void display(char * choice) {
   if(strcmp(choice, "log in") == 0) {
   //  printf("\x1b[H\x1b[J");
     printf("Username: ");
@@ -127,7 +125,6 @@ int display(char * choice) {
     logout();
     printf("Please choose whether you want to log in or create a new account:");
   }*/
-  return 0;
 }
 
 
@@ -153,11 +150,12 @@ int makeUser() {
     *checker = '\0';
   }
   strncat(input, ",", 1);
-  printf("\x1b[H\x1b[J");
   write(fd, input, strlen(input));
+  printf("\x1b[H\x1b[J");
   printf("Password: ");
   char input2[SEG_SIZE];
   fgets(input2, SEG_SIZE, stdin);
+  strncat(input, ",", 1);
   write(fd, input2, strlen(input2));
   close(fd);
   return 1;
@@ -173,31 +171,49 @@ int verifyUser() {
   char check[SEG_SIZE];
   check[0] = '\0';
   read(fd, check, SEG_SIZE);
-  userID = parse_args(check, ",");
   if (strlen(check) != 0) {
     *(strrchr(check, '\n') + 1) = '\0';
   }
+  userID = parse_args(check, "\n");
   char input[SEG_SIZE];
   fgets(input, SEG_SIZE, stdin);
   char * checker;
   if ((checker = strchr(input, '\n')) != NULL) {
     *checker = '\0';
   }
-  char * username = &check[0];
-  if(strcmp(input, username) == 0) {
-    printf("\x1b[H\x1b[J");
-    printf("Password: ");
-    char input2[SEG_SIZE];
-    fgets(input2, SEG_SIZE, stdin);
-    char * checker;
-    if ((checker = strchr(input2, '\n')) != NULL) {
-      *checker = '\0';
-    }
-    char * password = &check[1];
-    if(strcmp(input2, password) == 0) {
-      return 1;
+  int idx = 0;
+  while(userID[idx] != NULL) {
+    char **args = parse_args(userID[idx], ",");
+    if(strcmp(input, args[0]) == 0) {
+      printf("\x1b[H\x1b[J");
+      printf("Password: ");
+      char input2[SEG_SIZE];
+      fgets(input2, SEG_SIZE, stdin);
+      char * checker;
+      if ((checker = strchr(input2, '\n')) != NULL) {
+        *checker = '\0';
+      }
+      if(strcmp(input2, args[1]) == 0) {
+        return 1;
+      }
     }
   }
   printf("\x1b[H\x1b[J");
   return 0;
+}
+
+int viewAccount() {
+  char ** userID;
+  int fd = open("users.txt", O_RDONLY);
+  if(fd < 0) {
+    printf("Error: %s", strerror(errno));
+    return 1;
+  }
+  char check[SEG_SIZE];
+  check[0] = '\0';
+  read(fd, check, SEG_SIZE);
+  userID = parse_args(check, ",");
+  if (strlen(check) != 0) {
+    *(strrchr(check, '\n') + 1) = '\0';
+  }
 }
