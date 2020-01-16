@@ -8,10 +8,13 @@ bool running = true;
 int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
   char line[50];
+
   memset(me.username, '\0', 20); //Sets all values to null
   memset(me.password, '\0', 20);
   memset(me.rented, '\0', 50);
-  printf("Please choose whether you want to log in, create a new account, or exit the program\n\n- Log in\n- Create new account\n- Exit\n\n");
+
+  printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
+
   while(running) {
     printf("Type choice here: ");
     fgets(line, 50, stdin);
@@ -81,33 +84,43 @@ void displayMenu() {
   printf("\x1b[H\x1b[J");
   printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out\n\n");
 }
+
 void display(char * choice) {
-  char * newChoice = removeSpace(choice);
-  if(strcmp(newChoice, "exit") == 0) {
+  choice = removeSpace(choice);
+
+  if(strcmp(choice, "exit") == 0) {
     running = false;
   }
-  if(strcmp(newChoice, "log in") == 0) {
+
+  if(strcmp(choice, "log in") == 0) {
     printf("\x1b[H\x1b[J");
     printf("Username: ");
     if(verifyUser()) {
       displayMenu();
     }
   }
-  if(strcmp(newChoice, "create new account") == 0) {
+
+  if(strcmp(choice, "create new account") == 0) {
     printf("\x1b[H\x1b[J");
     printf("Username: ");
     if(makeUser()) {
       displayMenu();
     }
+    else {
+      printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
+    }
   }
-  if(strcmp(newChoice, "view my account") == 0) {
+
+  if(strcmp(choice, "view my account") == 0) {
     printf("\x1b[H\x1b[J");
     viewAccount();
   }
-  if(strcmp(newChoice, "back") == 0) {
+
+  if(strcmp(choice, "back") == 0) {
     displayMenu();
   }
-  if(strcmp(newChoice, "log out") == 0) {
+
+  if(strcmp(choice, "log out") == 0) {
     printf("\x1b[H\x1b[J");
     logout();
   }/*
@@ -136,11 +149,13 @@ void logout() {
   memset(me.username, '\0', 20);
   memset(me.password, '\0', 20);
   memset(me.rented, '\0', 50);
-  printf("Please choose whether you want to log in, create a new account, or exit the program\n\n- Log in\n- Create new account\n- Exit\n\n");
+  printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
 }
 
 int makeUser() {
+  bool exists = true;
   if(fopen("users.txt", "r") == NULL) {
+    exists = false;
     int fd = open("users.txt", O_CREAT|O_TRUNC, 0744);
     if (fd < 0) {
       printf("Error: %s", strerror(errno));
@@ -148,7 +163,8 @@ int makeUser() {
     }
     close(fd);
   }
-  int fd = open("users.txt", O_WRONLY|O_APPEND);
+
+  int fd = open("users.txt", O_RDWR|O_APPEND);
   char input[SEG_SIZE];
   fgets(input, SEG_SIZE, stdin);
   printf("\x1b[H\x1b[J");
@@ -156,15 +172,39 @@ int makeUser() {
   if ((checker = strchr(input, '\n')) != NULL) {
     *checker = '\0';
   }
+  if(exists) {
+    char ** userID;
+    char check[SEG_SIZE];
+    check[0] = '\0';
+    read(fd, check, SEG_SIZE);
+    if (strlen(check) != 0) {
+      *(strrchr(check, '\n') + 1) = '\0';
+    }
+    userID = parse_args(check, "\n");
+
+    int idx = 0;
+    while(userID[idx] != NULL) {
+      char **args = parse_args(userID[idx], ",");
+      if(strcmp(input, args[0]) == 0) {
+        printf("\x1b[H\x1b[J");
+        printf("Username has already been taken, please try again\n\n");
+        return 0;
+      }
+      idx++;
+    }
+  }
+
   strncat(input, ",", 1);
   write(fd, input, strlen(input));
   strcpy(me.username, input);
+
   printf("\x1b[H\x1b[J");
   printf("Password: ");
   char input2[SEG_SIZE];
   fgets(input2, SEG_SIZE, stdin);
   write(fd, input2, strlen(input2));
   strcpy(me.password, input2);
+
   close(fd);
   return 1;
 }
@@ -176,6 +216,7 @@ int verifyUser() {
     printf("Error: %s", strerror(errno));
     return 1;
   }
+
   char check[SEG_SIZE];
   check[0] = '\0';
   read(fd, check, SEG_SIZE);
@@ -189,6 +230,7 @@ int verifyUser() {
   if ((checker = strchr(input, '\n')) != NULL) {
     *checker = '\0';
   }
+
   int idx = 0;
   while(userID[idx] != NULL) {
     char **args = parse_args(userID[idx], ",");
@@ -211,7 +253,7 @@ int verifyUser() {
   }
   printf("\x1b[H\x1b[J");
   printf("Invalid account\n\n");
-  printf("Please choose whether you want to log in, create a new account, or exit the program\n\n- Log in\n- Create new account\n- Exit\n\n");
+  printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
   return 0;
 }
 
