@@ -194,9 +194,9 @@ int makeUser() {
     }
   }
 
+  strcpy(me.username, input);
   strncat(input, ",", 1);
   write(fd, input, strlen(input));
-  strcpy(me.username, input);
 
   printf("\x1b[H\x1b[J");
   printf("Password: ");
