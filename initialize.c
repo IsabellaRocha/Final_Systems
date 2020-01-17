@@ -1,13 +1,13 @@
 #include "headers.h"
 
-int semd, shmd, fd; // desecriptors
+int semd, shmd, shmd2, fd; // desecriptors
 union semun us;
 struct sembuf sb;
 
 int setUpCars(){
   printf("creating Cars...\n\n");
   // creating semaphore
-  semd = semget(SEMKEY, 1, IPC_CREAT | IPC_EXCL | 0644);
+  semd = semget(KEY, 1, IPC_CREAT | IPC_EXCL | 0644);
   if (semd < 0) {
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
@@ -15,16 +15,21 @@ int setUpCars(){
   printf("semaphore created\n");
   semctl(semd, 0, SETVAL, us);
   //creating shared memory
-  shmd = shmget(SHMKEY, sizeof(int) , IPC_CREAT | 0644);
+  shmd = shmget(KEY, sizeof(int) , IPC_CREAT | 0644);
   if (shmd < 0){
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }
+  shmd2 = shmget(KEY2, sizeof(int) , IPC_CREAT | 0644);
+  if (shmd2 < 0){
+    printf("error %d: %s\n", errno, strerror(errno));
+    return -1;
+  }
   printf("shared memory created\n");
-
+  //creating file
 }
 
-int viewCars(){
+int viewAvailableCars(){
   fd = open("Cars.txt",O_RDONLY);
   if ( fd < 0 ){
     printf("error: %s\n", strerror(fd));
@@ -37,22 +42,31 @@ int viewCars(){
   close(fd);
 }
 
+int viewRentedCars() {
+
+}
 int removeCars(){
       // Print Contents
-      viewCars();
-      shmd = shmget(SHMKEY, sizeof(int), 0);
+      shmd = shmget(KEY, sizeof(int), 0);
       if (shmd< 0){
         printf("sharedy memory error %d: %s\n", errno, strerror(errno));
         return -1;
       }
       shmctl(shmd, IPC_RMID, 0);
 
+      shmd2 = shmget(KEY2, sizeof(int), 0);
+      if (shmd2< 0){
+        printf("sharedy memory error %d: %s\n", errno, strerror(errno));
+        return -1;
+      }
+      shmctl(shmd2, IPC_RMID, 0);
+
       printf("shared memory removed\n");
 
       remove("Cars.txt");
       printf("file removed\n");
 
-      semd = semget(SEMKEY, 1, 0);
+      semd = semget(KEY, 1, 0);
       if (semd< 0) {
         printf("error %d: %s\n", errno, strerror(errno));
         return -1;

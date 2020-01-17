@@ -13,6 +13,7 @@
 #include <sys/shm.h>
 
 #define KEY 24602
+#define KEY2 24603
 #define SEG_SIZE 1024
 
 union semun {

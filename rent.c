@@ -1,101 +1,43 @@
 #include "headers.h"
-
-int semd, shmd, fd; // desecriptors
-union semun us;
+int shmd, shmd2, semd;
 struct sembuf sb;
+int my_write();
 
-int setUpCars(){
-  printf("creating Cars...\n\n");
-  // creating semaphore
-  semd = semget(SEMKEY, 1, IPC_CREAT | IPC_EXCL | 0644);
-  if (semd < 0) {
-    printf("error %d: %s\n", errno, strerror(errno));
-    return -1;
-  }
-  printf("semaphore created\n");
-  semctl(semd, 0, SETVAL, us);
-  //creating shared memory
-  shmd = shmget(SHMKEY, sizeof(int) , IPC_CREAT | 0644);
-  if (shmd < 0){
-    printf("error %d: %s\n", errno, strerror(errno));
-    return -1;
-  }
-  printf("shared memory created\n");
-  //creating file
-  fd = open("Cars.txt", O_CREAT | O_TRUNC | O_RDWR, 0644);
-  if (fd < 0){
-    printf("error %d: %s\n", errno, strerror(errno));
-    return -1;
-  }
-  close(fd);
-  printf("file created\n");
-
-}
-
-int viewCars(){
-  fd = open("Cars.txt",O_RDONLY);
-  if ( fd < 0 ){
-    printf("error: %s\n", strerror(fd));
-    return -2;
-  }
-  char Cars[1000]="\0";
-  read(fd,Cars,1000);
-  printf("printing the Cars so far...\n");
-  printf("%s\n",Cars);
-  close(fd);
-}
-
-int removeCars(){
-      // Print Contents
-      viewCars();
-      shmd = shmget(SHMKEY, sizeof(int), 0);
-      if (shmd< 0){
-        printf("sharedy memory error %d: %s\n", errno, strerror(errno));
-        return -1;
-      }
-      shmctl(shmd, IPC_RMID, 0);
-
-      printf("shared memory removed\n");
-
-      remove("Cars.txt");
-      printf("file removed\n");
-
-      semd = semget(SEMKEY, 1, 0);
-      if (semd< 0) {
-        printf("error %d: %s\n", errno, strerror(errno));
-        return -1;
-      }
-      semop(semd, &sb, 1);
-      semctl(semd, IPC_RMID, 0);
-      printf("semaphore removed\n");
-}
-
-int execute (char *args[]){
-  int debug = 0;
-  if(strcmp(args[1],"-c")==0){
-    debug = createCars();
-  } else if(strcmp(args[1],"-r")==0){
-    debug = removeCars();
-  } else if(strcmp(args[1],"-v")==0){
-    debug = viewCars();
-  } else{
-      printf("command not found\n");
-      debug = -1;
-  }
-  return debug;
-}
-
-int main(int argc, char *argv[]) {
-  us.val=1;
-  sb.sem_num=0;
-  sb.sem_op =-1;
-  if(argc <= 1) {
-    printf("%s\n", "You may access this Cars by using the following flags...");
-    printf("%s\n", "\"-c\" to create Cars");
-    printf("%s\n", "\"-r\" to remove Cars");
-    printf("%s\n", "\"-v\" to read Cars's contents");
-  } else {
-    int executed = execute(argv);
-  }
+int main() {
+  sb.sem_num = 0;
+  //sb.sem_flg = SEM_UNDO;
+  sb.sem_op = -1;
+  my_write();
   return 0;
+}
+
+int my_write() {
+    printf("trying to get in\n");
+    semd = semget(KEY, 1, 0);
+    if (semd < 0) {
+        printf("Error: %s", strerror(errno));
+        return 1;
+    }
+    semop(semd, &sb, 1);
+    shmd = shmget(KEY, sizeof(char*), 0);
+    shmd2 = shmget(KEY2, sizeof(char*), 0);
+    if (shmd < 0) {
+        printf("Error: %s", strerror(errno));
+        return 1;
+    }
+
+    struct vehicle* availableCars= shmat(shmd, 0, 0);
+    struct vehicle* rentedCars= shmat(shmd2, 0, 0);
+
+    char input[SEG_SIZE];
+    printf("Your addition: ");
+    fgets(input, SEG_SIZE, stdin);
+    write(fd, input, strlen(input));
+    shmdt(input);
+    close(fd);
+    strcpy(line, input);
+    sb.sem_op = 1;
+    semop(semd, &sb, 1);
+    printf("\n");
+    return 0;
 }
