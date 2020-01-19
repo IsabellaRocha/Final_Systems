@@ -29,22 +29,28 @@ int setUpCars(){
   //creating file
 }
 
-int viewAvailableCars(){
-  fd = open("Cars.txt",O_RDONLY);
-  if ( fd < 0 ){
-    printf("error: %s\n", strerror(fd));
-    return -2;
+void viewAvailableCars(){
+  struct vehicle* availableCars = shmat(shmd, 0, 0);
+  int idx = 0;
+  printf("\x1b[H\x1b[J");
+  printf("Available Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n")
+  for(idx; availableCars[idx] != NULL; idx++) {
+    printf("- %s, %s, %d, $%d\n", availableCars[idx].model, availableCars[idx].color, availableCars[idx].seatNumber, availableCars[idx].cost);
   }
-  char Cars[1000]="\0";
-  read(fd,Cars,1000);
-  printf("printing the Cars so far...\n");
-  printf("%s\n",Cars);
-  close(fd);
+  printf("\nType 'back' to go back to the menu, or type the model of the car in order to rent it out\n\n");
 }
 
-int viewRentedCars() {
-
+void viewRentedCars() {
+  struct vehicle* rentedCars = shmat(shmd, 0, 0);
+  int idx = 0;
+  printf("\x1b[H\x1b[J");
+  printf("Rented Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n")
+  for(idx; rentedCars[idx] != NULL; idx++) {
+    printf("- %s, %s, %d, $%d\n", rentedCars[idx].model, rentedCars[idx].color, rentedCars[idx].seatNumber, rentedCars[idx].cost);
+  }
+  printf("\nType 'back' to go back to the menu\n\n");
 }
+
 int removeCars(){
       // Print Contents
       shmd = shmget(KEY, sizeof(int), 0);
