@@ -20,6 +20,22 @@ int setUpCars(){
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }
+
+  struct vehicle car1 = {"Toyota", "Blue", 5, 200};
+  struct vehicle car2 = {"Jeep", "Green", 5, 700};
+  struct vehicle car3 = {"Buick", "Gray", 5, 300};
+  struct vehicle car4 = {"Ford", "White", 5, 600};
+  struct vehicle car5 = {"BMW", "Blue", 5, 1000};
+  struct vehicle car6 = {"Volkswagen", "Red", 2, 500};
+  struct vehicle car7 = {"Subaru", "Gray", 8, 1200};
+  struct vehicle car8 = {"Tesla", "Black", 5, 1000};
+  struct vehicle car9 = {"Toyota", "Blue", 5, 500};
+  struct vehicle car10 = {"Lexus", "Blue", 8, 1500};
+  
+  struct vehicle *availableCars = shmat(shmd, 0, 0);
+  availableCars = {car1, car2, car3, car4, car5, car6, car7, car8, car9, car10};
+  shmdt(availableCars); //All cars start off as available
+
   shmd2 = shmget(KEY2, sizeof(int) , IPC_CREAT | 0644);
   if (shmd2 < 0){
     printf("error %d: %s\n", errno, strerror(errno));
@@ -37,7 +53,7 @@ void viewAvailableCars(){
   for(idx; availableCars[idx] != NULL; idx++) {
     printf("- %s, %s, %d, $%d\n", availableCars[idx].model, availableCars[idx].color, availableCars[idx].seatNumber, availableCars[idx].cost);
   }
-  printf("\nType 'back' to go back to the menu, or type the model of the car in order to rent it out\n\n");
+  printf("\nType 'back' to go back to the menu, or type rent if you'd like to rent out a car\n\n");
 }
 
 void viewRentedCars() {
@@ -68,7 +84,6 @@ int removeCars(){
       shmctl(shmd2, IPC_RMID, 0);
 
       printf("shared memory removed\n");
-
 
       semd = semget(KEY, 1, 0);
       if (semd< 0) {

@@ -1,7 +1,5 @@
 #include "headers.h"
 
-struct vehicle* availableCars;
-struct vehicle* rentedCars;
 struct users me;
 bool running = true;
 

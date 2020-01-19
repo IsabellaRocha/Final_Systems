@@ -12,7 +12,6 @@ int main() {
 }
 
 int my_write() {
-    printf("trying to get in\n");
     semd = semget(KEY, 1, 0);
     if (semd < 0) {
         printf("Error: %s", strerror(errno));
@@ -30,12 +29,20 @@ int my_write() {
     struct vehicle* rentedCars= shmat(shmd2, 0, 0);
 
     char input[SEG_SIZE];
-    printf("Your addition: ");
+    printf("Please type in the model of which car you'd like to rent: ");
     fgets(input, SEG_SIZE, stdin);
-    write(fd, input, strlen(input));
-    shmdt(input);
-    close(fd);
-    strcpy(line, input);
+    int idx = 0;
+    for(idx; availableCars[idx] != NULL; idx++) {
+      if(strcmp(availableCars[idx].model, input) == 0) {
+        rentedCars[idx] = availableCars[idx];
+        me.balance -= availableCars[idx].cost;
+        struct vehicle temp = {"", "", 0, 0};
+        availableCars[idx] = temp;
+      }
+    }
+    shmdt(availableCars);
+    shmdt(rentedCars);
+
     sb.sem_op = 1;
     semop(semd, &sb, 1);
     printf("\n");
