@@ -1,6 +1,7 @@
 #include "headers.h"
 
 struct users me;
+struct vehicle temp = {" ", " ", 0, 0};
 bool running = true;
 
 int main() {
@@ -11,7 +12,7 @@ int main() {
 
   memset(me.username, '\0', 20); //Sets all values to null
   memset(me.password, '\0', 20);
-  memset(me.rented, '\0', 50);
+  me.rented = temp;
   me.balance = 0;
 
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
@@ -96,7 +97,7 @@ int createMem() {
 }
 void displayMenu() {
   printf("\x1b[H\x1b[J");
-  printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out\n\n");
+  printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Return a car\n- Log out\n\n");
 }
 
 void display(char * choice) {
@@ -139,7 +140,6 @@ void display(char * choice) {
     logout();
   }
   if(strcmp(choice, "view available cars") == 0) {
-  //  printf("\x1b[H\x1b[J");
     int status;
     if(fork() == 0) {
       char* args[] = {"./initialize", "-va", NULL};
@@ -167,6 +167,34 @@ void display(char * choice) {
       wait(&status);
     }
   }
+  if(strcmp(choice, "rent") == 0) {
+    int status;
+    if(fork() == 0) {
+      char* args[] = {"./rent", NULL};
+      int execute = execvp("./rent", args);
+      if(execute < 0) {
+        printf("Error: %s", strerror(errno));
+        return 1;
+      }
+    }
+    else {
+      wait(&status);
+    }
+  }
+  if(strcmp(choice, "return a car") == 0) {
+    int status;
+    if(fork() == 0) {
+      char* args[] = {"./ret", NULL};
+      int execute = execvp("./ret", args);
+      if(execute < 0) {
+        printf("Error: %s", strerror(errno));
+        return 1;
+      }
+    }
+    else {
+      wait(&status);
+    }
+  }
 }
 
 
@@ -175,7 +203,6 @@ void rent();
 void logout() {
   memset(me.username, '\0', 20);
   memset(me.password, '\0', 20);
-  memset(me.rented, '\0', 50);
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
 }
 
@@ -288,7 +315,7 @@ int verifyUser() {
 void viewAccount() {
   printf("Username: %s\n", me.username);
   printf("Password: %s\n", me.password);
-  printf("Current car: %s\n", me.rented);
+  printf("Current car: %s\n", me.rented.model);
   printf("Current balance: $%d\n", me.balance);
   printf("Type 'back' to go back to the menu\n\n");
 }

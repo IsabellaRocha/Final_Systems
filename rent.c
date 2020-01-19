@@ -20,8 +20,12 @@ int my_write() {
     }
     semop(semd, &sb, 1);
     shmd = shmget(KEY, sizeof(char*), 0);
-    shmd2 = shmget(KEY2, sizeof(char*), 0);
     if (shmd < 0) {
+        printf("Error: %s", strerror(errno));
+        return 1;
+    }
+    shmd2 = shmget(KEY2, sizeof(char*), 0);
+    if (shmd2 < 0) {
         printf("Error: %s", strerror(errno));
         return 1;
     }
@@ -35,10 +39,11 @@ int my_write() {
     int idx = 0;
     for(idx; strcmp(availableCars[idx].model, " ") != 0; idx++) {
       if(strcmp(availableCars[idx].model, input) == 0) {
-        rentedCars[idx] = availableCars[idx];
+        memcpy(&me.rented, &availableCars[idx], sizeof(struct vehicle));
+        memcpy(&rentedCars[idx], &availableCars[idx], sizeof(struct vehicle));
         me.balance -= availableCars[idx].cost;
         struct vehicle temp = {"Empty", "Empty", 0, 0};
-        availableCars[idx] = temp;
+        memcpy(&availableCars[idx], &temp, sizeof(struct vehicle));
       }
     }
     shmdt(availableCars);

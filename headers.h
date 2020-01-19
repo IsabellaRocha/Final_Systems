@@ -41,7 +41,7 @@ struct day {
 struct users {
   char username[20];
   char password[20];
-  char rented[50];
+  struct vehicle rented;
   int balance;
 };
 
