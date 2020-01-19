@@ -2,6 +2,7 @@
 int shmd, shmd2, semd;
 struct sembuf sb;
 int my_write();
+struct users me;
 
 int main() {
   sb.sem_num = 0;
@@ -32,11 +33,11 @@ int my_write() {
     printf("Please type in the model of which car you'd like to rent: ");
     fgets(input, SEG_SIZE, stdin);
     int idx = 0;
-    for(idx; availableCars[idx] != NULL; idx++) {
+    for(idx; strcmp(availableCars[idx].model, " ") != 0; idx++) {
       if(strcmp(availableCars[idx].model, input) == 0) {
         rentedCars[idx] = availableCars[idx];
         me.balance -= availableCars[idx].cost;
-        struct vehicle temp = {"", "", 0, 0};
+        struct vehicle temp = {"Empty", "Empty", 0, 0};
         availableCars[idx] = temp;
       }
     }

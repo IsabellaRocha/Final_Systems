@@ -9,7 +9,7 @@ user.o: user.c
 rent.o: rent.c
 	gcc -c rent.c
 
-initialize.o: intitialize.c
+initialize.o: initialize.c
 	gcc -c initialize.c
 
 run:

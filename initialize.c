@@ -31,9 +31,17 @@ int setUpCars(){
   struct vehicle car8 = {"Tesla", "Black", 5, 1000};
   struct vehicle car9 = {"Toyota", "Blue", 5, 500};
   struct vehicle car10 = {"Lexus", "Blue", 8, 1500};
-  
-  struct vehicle *availableCars = shmat(shmd, 0, 0);
-  availableCars = {car1, car2, car3, car4, car5, car6, car7, car8, car9, car10};
+  struct vehicle temp = {" ", " ", 0, 0};
+
+
+
+  struct vehicle *availableCars = (struct vehicle*) shmat(shmd, 0, 0);
+  struct vehicle cars[10] = {car1, car2, car3, car4, car5, car6, car7, car8, car9, car10};
+  int idx = 0;
+  for(idx; idx < 10; idx++) {
+    memcpy(&availableCars[idx], &cars[idx], sizeof(struct vehicle));
+  }
+  availableCars[idx] = temp;
   shmdt(availableCars); //All cars start off as available
 
   shmd2 = shmget(KEY2, sizeof(int) , IPC_CREAT | 0644);
@@ -45,23 +53,23 @@ int setUpCars(){
   //creating file
 }
 
-void viewAvailableCars(){
+int viewAvailableCars(){
   struct vehicle* availableCars = shmat(shmd, 0, 0);
   int idx = 0;
   printf("\x1b[H\x1b[J");
-  printf("Available Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n")
-  for(idx; availableCars[idx] != NULL; idx++) {
+  printf("Available Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n");
+  for(idx; strcmp(availableCars[idx].model, " ") != 0; idx++) {
     printf("- %s, %s, %d, $%d\n", availableCars[idx].model, availableCars[idx].color, availableCars[idx].seatNumber, availableCars[idx].cost);
   }
   printf("\nType 'back' to go back to the menu, or type rent if you'd like to rent out a car\n\n");
 }
 
-void viewRentedCars() {
+int viewRentedCars() {
   struct vehicle* rentedCars = shmat(shmd, 0, 0);
   int idx = 0;
   printf("\x1b[H\x1b[J");
-  printf("Rented Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n")
-  for(idx; rentedCars[idx] != NULL; idx++) {
+  printf("Rented Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n");
+  for(idx; strcmp(rentedCars[idx].model, " ") != 0; idx++) {
     printf("- %s, %s, %d, $%d\n", rentedCars[idx].model, rentedCars[idx].color, rentedCars[idx].seatNumber, rentedCars[idx].cost);
   }
   printf("\nType 'back' to go back to the menu\n\n");
@@ -98,11 +106,13 @@ int removeCars(){
 int execute (char *args[]){
   int debug = 0;
   if(strcmp(args[1],"-c")==0){
-    debug = createCars();
+    debug = setUpCars();
   } else if(strcmp(args[1],"-r")==0){
     debug = removeCars();
-  } else if(strcmp(args[1],"-v")==0){
-    debug = viewCars();
+  } else if(strcmp(args[1],"-va")==0){
+    debug = viewAvailableCars();
+  } else if(strcmp(args[1],"-vr")==0){
+    debug = viewRentedCars();
   } else{
       printf("command not found\n");
       debug = -1;
