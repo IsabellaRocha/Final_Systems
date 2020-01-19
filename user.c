@@ -7,12 +7,12 @@ int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
   char line[50];
 
-  char* args[] = {"./initialize", "-c", NULL};
-  int execute = execvp("./initialize", args);
-  if(execute < 0) {
-    printf("Error: %s", strerror(errno));
-    return 1;
-  }
+//  char* args[] = {"./initialize", "-c", NULL};
+//  int execute = execvp("./initialize", args);
+//  if(execute < 0) {
+//    printf("Error: %s", strerror(errno));
+//    return 1;
+//  }
 
   memset(me.username, '\0', 20); //Sets all values to null
   memset(me.password, '\0', 20);
@@ -24,7 +24,6 @@ int main() {
   while(running) {
     printf("Type choice here: ");
     fgets(line, 50, stdin);
-    printf("\x1b[H\x1b[J");
     char * checker;
     if ((checker = strchr(line, '\n')) != NULL) {
       *checker = '\0';
@@ -80,7 +79,7 @@ char * removeSpace(char * line) {
     if(cur > 0 && newLine[cur - 1] == ' ') { //In case there's a space after the last charcter
     newLine[cur - 1] = '\0';
 }
-newLine[cur] = '\0'; //Null to terminate execvp
+newLine[cur] = '\0';
 char * parse = malloc(50 * sizeof(char));
 strcpy(parse, newLine);
 return parse;
@@ -131,12 +130,18 @@ void display(char * choice) {
     logout();
   }
   if(strcmp(choice, "view available cars") == 0) {
-    printf("\x1b[H\x1b[J");
-    char* args[] = {"./initialize", "-va", NULL};
-    int execute = execvp("./initialize", args);
-    if(execute < 0) {
-      printf("Error: %s", strerror(errno));
-      return 1;
+  //  printf("\x1b[H\x1b[J");
+    int status;
+    if(fork() == 0) {
+      char* args[] = {"./initialize", "-va", NULL};
+      int execute = execvp("./initialize", args);
+      if(execute < 0) {
+        printf("Error: %s", strerror(errno));
+        return 1;
+      }
+    }
+    else {
+      wait(&status);
     }
   }
   if(strcmp(choice, "view rented cars") == 0) {

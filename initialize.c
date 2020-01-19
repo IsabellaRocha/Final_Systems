@@ -9,6 +9,7 @@ int setUpCars(){
   // creating semaphore
   semd = semget(KEY, 1, IPC_CREAT | IPC_EXCL | 0644);
   if (semd < 0) {
+    printf("ayo");
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }

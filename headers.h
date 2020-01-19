@@ -11,6 +11,7 @@
 #include <sys/sem.h>
 #include <sys/types.h>
 #include <sys/shm.h>
+#include <sys/wait.h>
 
 #define KEY 24602
 #define KEY2 24603
