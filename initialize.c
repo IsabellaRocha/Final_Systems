@@ -63,8 +63,6 @@ int removeCars(){
 
       printf("shared memory removed\n");
 
-      remove("Cars.txt");
-      printf("file removed\n");
 
       semd = semget(KEY, 1, 0);
       if (semd< 0) {

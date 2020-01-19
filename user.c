@@ -12,6 +12,7 @@ int main() {
   memset(me.username, '\0', 20); //Sets all values to null
   memset(me.password, '\0', 20);
   memset(me.rented, '\0', 50);
+  me.balance = 0;
 
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
 
@@ -204,6 +205,7 @@ int makeUser() {
   fgets(input2, SEG_SIZE, stdin);
   write(fd, input2, strlen(input2));
   strcpy(me.password, input2);
+  me.balance = 5000;
 
   close(fd);
   return 1;
@@ -261,5 +263,6 @@ void viewAccount() {
   printf("Username: %s\n", me.username);
   printf("Password: %s\n", me.password);
   printf("Current car: %s\n", me.rented);
+  printf("Current balance: $%d\n", me.balance);
   printf("Type 'back' to go back to the menu\n\n");
 }
