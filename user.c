@@ -7,12 +7,7 @@ int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
   char line[50];
 
-//  char* args[] = {"./initialize", "-c", NULL};
-//  int execute = execvp("./initialize", args);
-//  if(execute < 0) {
-//    printf("Error: %s", strerror(errno));
-//    return 1;
-//  }
+  int mem = createMem();
 
   memset(me.username, '\0', 20); //Sets all values to null
   memset(me.password, '\0', 20);
@@ -85,6 +80,20 @@ strcpy(parse, newLine);
 return parse;
 }
 
+int createMem() {
+  int status;
+  if(fork() == 0) {
+    char* args[] = {"./initialize", "-c", NULL};
+    int execute = execvp("./initialize", args);
+    if(execute < 0) {
+      printf("Error: %s", strerror(errno));
+      return 1;
+    }
+  }
+  else {
+    wait(&status);
+  }
+}
 void displayMenu() {
   printf("\x1b[H\x1b[J");
   printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Log out\n\n");
@@ -145,12 +154,17 @@ void display(char * choice) {
     }
   }
   if(strcmp(choice, "view rented cars") == 0) {
-    printf("\x1b[H\x1b[J");
-    char* args[] = {"./initialize", "-vr", NULL};
-    int execute = execvp("./initialize", args);
-    if(execute < 0) {
-      printf("Error: %s", strerror(errno));
-      return 1;
+    int status;
+    if(fork() == 0) {
+      char* args[] = {"./initialize", "-vr", NULL};
+      int execute = execvp("./initialize", args);
+      if(execute < 0) {
+        printf("Error: %s", strerror(errno));
+        return 1;
+      }
+    }
+    else {
+      wait(&status);
     }
   }
 }

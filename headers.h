@@ -62,6 +62,7 @@ int verifyUser();
 void viewAccount();
 char ** parse_args(char * line, char * delimiter);
 char * removeSpace(char * line);
+int createMem();
 /*int setUpCars();
 void viewAvailableCars();
 void viewRentedCars();

@@ -7,7 +7,7 @@ struct sembuf sb;
 int setUpCars(){
   printf("creating Cars...\n\n");
   // creating semaphore
-  semd = semget(KEY, 1, IPC_CREAT | IPC_EXCL | 0644);
+  semd = semget(KEY, 1, IPC_CREAT | 0644);
   if (semd < 0) {
     printf("ayo");
     printf("error %d: %s\n", errno, strerror(errno));
@@ -34,8 +34,6 @@ int setUpCars(){
   struct vehicle car10 = {"Lexus", "Blue", 8, 1500};
   struct vehicle temp = {" ", " ", 0, 0};
 
-
-
   struct vehicle *availableCars = (struct vehicle*) shmat(shmd, 0, 0);
   struct vehicle cars[10] = {car1, car2, car3, car4, car5, car6, car7, car8, car9, car10};
   int idx = 0;
@@ -50,6 +48,13 @@ int setUpCars(){
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }
+  struct vehicle *rentedCars = (struct vehicle*) shmat(shmd2, 0, 0);
+  struct vehicle cars2[10] = {temp, temp, temp, temp, temp, temp, temp, temp, temp, temp};
+  int i = 0;
+  for(i; i < 10; i++) {
+    memcpy(&rentedCars[i], &cars2[i], sizeof(struct vehicle));
+  }
+
   printf("shared memory created\n");
   //creating file
 }
@@ -66,7 +71,7 @@ int viewAvailableCars(){
 }
 
 int viewRentedCars() {
-  struct vehicle* rentedCars = shmat(shmd, 0, 0);
+  struct vehicle* rentedCars = shmat(shmd2, 0, 0);
   int idx = 0;
   printf("\x1b[H\x1b[J");
   printf("Rented Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n");
