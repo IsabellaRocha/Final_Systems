@@ -7,6 +7,13 @@ int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
   char line[50];
 
+  char* args[] = {"./initialize", "-c", NULL};
+  int execute = execvp("./initialize", args);
+  if(execute < 0) {
+    printf("Error: %s", strerror(errno));
+    return 1;
+  }
+
   memset(me.username, '\0', 20); //Sets all values to null
   memset(me.password, '\0', 20);
   memset(me.rented, '\0', 50);
@@ -122,23 +129,25 @@ void display(char * choice) {
   if(strcmp(choice, "log out") == 0) {
     printf("\x1b[H\x1b[J");
     logout();
-  }/*
+  }
   if(strcmp(choice, "view available cars") == 0) {
     printf("\x1b[H\x1b[J");
-    int idx = 0;
-    for(idx; availableCars[idx] != NULL; idx++) {
-      printf("%s\n", availableCars[idx].model);
+    char* args[] = {"./initialize", "-va", NULL};
+    int execute = execvp("./initialize", args);
+    if(execute < 0) {
+      printf("Error: %s", strerror(errno));
+      return 1;
     }
   }
   if(strcmp(choice, "view rented cars") == 0) {
     printf("\x1b[H\x1b[J");
-    int idx = 0;
-    rent();
-    for(idx; rentedCars[idx] != NULL; idx++) {
-      printf("%s\n", rentCars[idx].model);
+    char* args[] = {"./initialize", "-vr", NULL};
+    int execute = execvp("./initialize", args);
+    if(execute < 0) {
+      printf("Error: %s", strerror(errno));
+      return 1;
     }
   }
-  }*/
 }
 
 
