@@ -30,8 +30,8 @@ int my_write() {
         return 1;
     }
 
-    struct vehicle* availableCars= shmat(shmd, 0, 0);
-    struct vehicle* rentedCars= shmat(shmd2, 0, 0);
+    struct vehicle* availableCars = (struct vehicle*) shmat(shmd, 0, 0);
+    struct vehicle* rentedCars = (struct vehicle*) shmat(shmd2, 0, 0);
 
     char input[SEG_SIZE];
     printf("Please type in the model of which car you'd like to rent: ");
