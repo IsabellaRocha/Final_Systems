@@ -25,10 +25,10 @@ int my_write() {
         return 1;
     }
 
-    struct vehicle* availablecars = (struct vehicle*) shmat(shmd, 0, 0);
+    struct vehicle* cars = (struct vehicle*) shmat(shmd, 0, 0);
 
     char input[SEG_SIZE];
-    printf("Hi! Can you confirm that you are here to return your car? (Y\\N): ")
+    printf("Hi! Can you confirm that you are here to return your car? (Y\\N): ");
     fgets(input, SEG_SIZE, stdin);
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
@@ -36,21 +36,21 @@ int my_write() {
     int today_day = tm.tm_mday;
 
     if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
-      struct vehicle = me.rented;
+      struct vehicle car = me.rented;
 
       if(0){
-        printf("Your car is %d day late. Your fee is: %d. Would you like to confirm your payment? (Y\\N): ")
+        printf("Your car is %d days late. Your fee is: %d. Would you like to confirm your payment? (Y\\N): ");
         fgets(input, SEG_SIZE, stdin);
       } else if(0){
-        printf("You still have %d days left until your rental expires. Would you like to still return the car? (Y\\N): ")
+        printf("You still have %d days left until your rental expires. Would you like to still return the car? (Y\\N): ");
         fgets(input, SEG_SIZE, stdin);
       } else{
-        printf("Can you confirm the return of your car? (Y\\N): ")
+        printf("Can you confirm the return of your car? (Y\\N): ");
       }
     } else {
       return;
     }
-    
+
     shmdt(cars);
 
     sb.sem_op = 1;
