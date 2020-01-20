@@ -27,18 +27,18 @@ union semun {
                               (Linux-specific) */
 };
 
+struct calendar {
+  int unit1[365];
+  int unit2[365];
+  int unit3[365];
+};
+
 struct vehicle {
   char model[50];
   char color[20];
   int seatNumber;
   int cost;
-  struct calendar * calendar;
-};
-
-struct calendar {
-  int unit1[365];
-  int unit2[365];
-  int unit3[365];
+  struct calendar calendar;
 };
 
 struct users {
@@ -57,7 +57,7 @@ extern struct users me;
 
 int makeUser();
 int makePassword();
-void display(char * choice);
+int display(char * choice);
 void displayMenu();
 void rent();
 void logout();

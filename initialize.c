@@ -22,12 +22,9 @@ int setUpCars(){
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }
-  struct calendar[10] calendars;
+  struct calendar calendars[10];
   for (size_t i = 0; i < 10; i++) {
-    int one[365] = { 0 };
-    int two[365] = { 0 };
-    int three[365] = { 0 };
-    struct calendar calendar = {one,two,three};
+    struct calendar calendar = {0,0,0};
     calendars[i] = calendar;
 
   }

@@ -27,17 +27,18 @@ int my_write() {
 
     struct vehicle * cars = (struct vehicle*) shmat(shmd, 0, 0);
 
+
     char str_start_date[SEG_SIZE];
     char str_end_date[SEG_SIZE];
     char car[SEG_SIZE];
     printf("Hi! During which days are you interested in borrowing a car?\n")
     printf("We ask that you enter dates in the format of MM-DD\nStarting date:");
-    fgets(start_date, SEG_SIZE, stdin);
-    printf("Ending date:");
-    fgets(end_date, SEG_SIZE, stdin);
+    fgets(str_start_date, SEG_SIZE, stdin);
+    printf("\nEnding date:");
+    fgets(str_end_date, SEG_SIZE, stdin);
 
-    char * str_start_date = parse_args(str_start_date,'-');
-    char * str_end_date = parse_args(str_end_date,'-');
+    char ** str_start_date = parse_args(str_start_date,'-');
+    char ** str_end_date = parse_args(str_end_date,'-');
 
     int start_month = atoi(str_start_date[0])
     int start_day = atoi(str_start_date[1])
@@ -64,6 +65,7 @@ int my_write() {
     int end_date = end_month + end_day;
     printf("The following cars are available during those days:\n");
 
+    int unit =0;
     for (size_t i = 0; i < 10; i++) {
       struct calendar * availablility = cars[i].calendar;
       int available = 0;
@@ -73,6 +75,7 @@ int my_write() {
         }
       }
       if (available){
+        unit = 1;
         printf("%s\n",cars[i].model);
       } else{
         available = 0;
@@ -82,6 +85,7 @@ int my_write() {
           }
         }
         if (available){
+          unit = 2;
           printf("%s\n",cars[i].model);
         } else{
           available = 0;
@@ -91,11 +95,17 @@ int my_write() {
             }
           }
           if (available){
+            unit = 3;
             printf("%s\n",cars[i].model);
+          } else{
+            //if no cars are available, go back to the menu screen
+            printf("Sorry, no cars are availble during those days.\n");
+            return 1;
           }
         }
       }
     }
+    //after showing what cars are available, let them choose
     struct vehicle * chosen_car = NULL;
     while(chosen_car == NULL){
       printf("Please type in the model of the car you'd like to rent: ");
@@ -104,40 +114,39 @@ int my_write() {
       for( i = 0; i < 10; i++){
         if (strcmp(cars[i].model, input) == 0){
           chosen_car = cars[i];
+        } else if (strcmp(cars[i].model, input) == "return"){
+          //if user would like to cancel renting  car, go back to the menu screen
+          return 1;
         }
       }
       if(chosen_car == NULL){
         printf("Error: You've entered a model that does not exist in our database.\n");
       }
     }
+
+    char input[SEG_SIZE];
     int cost = chosen_car.cost * (end_date - start_date);
-
-    for( i = 0; strcmp(cars[i].model, input) == 0; i++) {
-        memcpy(&me.rented, &cars[i], sizeof(struct vehicle));
-        me.balance -= cars[i].cost;
-        availablility = cars[i].calendar;
-        if (availablility->unit1[month + day] == 0){
-          availablility->unit2[month + day] = me.userid;
-        } else if (availablility->unit2[month + day] == 0){
-          availablility->unit2[month + day] = me.userid;
-        } else if (availablility->unit3[month + day] == 0){
-          availablility->unit3[month + day] = me.userid;
+    printf("The final price for the rental is: %d\nWould you like to continue with your purchase? (Y\\N)\n", cost);
+    fgets(input, SEG_SIZE, stdin);
+    if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
+      me.balance -= cost;
+      if(unit == 1){
+        for (size_t i = start_date; i < end_date; i++) {
+          chosen_car.calendar.unit1[i] = me.userid;
         }
-    }
-
-
-
-    for(size_t i = 0; strcmp(cars[i].model, input) == 0; i++) {
-        memcpy(&me.rented, &cars[i], sizeof(struct vehicle));
-        me.balance -= cars[i].cost;
-        availablility = cars[i].calendar;
-        if (availablility->unit1[month + day] == 0){
-          availablility->unit2[month + day] = me.userid;
-        } else if (availablility->unit2[month + day] == 0){
-          availablility->unit2[month + day] = me.userid;
-        } else if (availablility->unit3[month + day] == 0){
-          availablility->unit3[month + day] = me.userid;
+      } else if(unit == 2){
+        for (size_t i = start_date; i < end_date; i++) {
+          chosen_car.calendar.unit2[i] = me.userid;
         }
+      } else if if(unit == 3){
+        for (size_t i = start_date; i < end_date; i++) {
+          chosen_car.calendar.unit3[i] = me.userid;
+        }
+      }
+      memcpy(&me.rented, &chosen_car, sizeof(struct vehicle));
+    } else{
+      printf("Your purchase has been cancelled\n");
+      return 1;
     }
 
     shmdt(cars);

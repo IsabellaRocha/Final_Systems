@@ -1,7 +1,9 @@
 #include "headers.h"
 struct users me;
-struct vehicle temp = {" ", " ", 0, 0};
 bool running = true;
+int semd, shmd, shmd2, fd; // desecriptors
+union semun us;
+struct sembuf sb;
 
 int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
@@ -9,8 +11,9 @@ int main() {
 
   int mem = createMem();
 
-  memset(me.username, '\0', 20); //Sets all values to null
-  me.rented = 0;
+  memset(me.username, '\0', sizeof(me.username)); //Sets all values to null
+  me.userid = 0;
+  me.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
   me.balance = 0;
 
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
@@ -98,7 +101,7 @@ void displayMenu() {
   printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Return a car\n- Log out\n\n");
 }
 
-void display(char * choice) {
+int display(char * choice) {
   choice = removeSpace(choice);
 
   if(strcmp(choice, "exit") == 0) {
@@ -193,6 +196,7 @@ void display(char * choice) {
       wait(&status);
     }
   }
+  return 0;
 }
 
 
@@ -200,7 +204,6 @@ void rent();
 
 void logout() {
   memset(me.username, '\0', 20);
-  memset(me.password, '\0', 20);
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
 }
 
@@ -226,7 +229,6 @@ int makeUser() {
   if ((checker = strchr(input, '\n')) != NULL) {
     *checker = '\0';
   }
-  if(exists) {
     char ** userID;
     char check[SEG_SIZE];
     check[0] = '\0';
@@ -246,26 +248,23 @@ int makeUser() {
       }
       idx++;
     }
-    //after username and passwords are confirmed, store username's other info in shared memory
-    semd = semget(SEM2KEY, 1, 0);
-    if (semd < 0) {
-        printf("semaphore error: %s", strerror(errno));
-        return 1;
-    }
-    semop(semd, &sb, 1);
-    shmd = shmget(MEM2KEY, sizeof(char*), 0);
-    if (shmd < 0) {
-        printf("memory error: %s", strerror(errno));
-        return 1;
-    }
 
-    struct users * users = (struct vehicle*) shmat(shmd, 0, 0);
-    struct user user= {num_users+1,input,NULL,5000};
-    users[num_users] = user;
+  //after username and passwords are confirmed, store username's other info in shared memory
+  semd = semget(SEM2KEY, 1, 0);
+  if (semd < 0) {
+      printf("semaphore error: %s", strerror(errno));
+      return 1;
+  }
+  semop(semd, &sb, 1);
+  shmd = shmget(MEM2KEY, sizeof(char*), 0);
+  if (shmd < 0) {
+      printf("memory error: %s", strerror(errno));
+      return 1;
   }
 
-
-  //
+  struct users * users = (struct users*) shmat(shmd, 0, 0);
+  struct users user= {(num_users+1),input,{" ", " ", 0, 0, {0,0,0}},5000};
+  users[num_users] = user;
 
   strcpy(me.username, input);
   strncat(input, ",", 1);
@@ -325,6 +324,9 @@ int verifyUser() {
       }
       if(strcmp(input2, args[1]) == 0) {
         strcpy(me.username, input);
+        //me.userid =
+        //me.rented =
+        //me.balance =
         return 1;
       }
     }
