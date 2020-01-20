@@ -35,12 +35,6 @@ int my_write() {
     fgets(start_date, SEG_SIZE, stdin);
     printf("Ending date:");
     fgets(end_date, SEG_SIZE, stdin);
-    printf("The following cars are available during those days:\n");
-    for (size_t i = 0; i < count; i++) {
-      availablility = car[i].calendar;
-    }
-    printf("Please type in the model of the car you'd like to rent: ");
-    fgets(car, SEG_SIZE, stdin);
 
     char * start_date = parse_args(start_date,'-');
 
@@ -52,12 +46,34 @@ int my_write() {
     } else{
       month = month * 31;
     }
+
+    printf("The following cars are available during those days:\n");
+    for (size_t i = 0; i < count; i++) {
+      struct calendar * availablility = cars[i].calendar;
+      if (availablility->unit1[month + day] == 0){
+        printf("%s\n",cars[i].model);
+      } else if (availablility->unit2[month + day] == 0){
+        printf("%s\n",cars[i].model);
+      } else if (availablility->unit3[month + day] == 0){
+        printf("%s\n",cars[i].model);
+      }
+    }
+    printf("Please type in the model of the car you'd like to rent: ");
+    fgets(car, SEG_SIZE, stdin);
+
+
     int day = atoi(start_date[1])
     for(size_t i = 0; strcmp(cars[i].model, input) == 0; i++) {
         memcpy(&me.rented, &cars[i], sizeof(struct vehicle));
         me.balance -= cars[i].cost;
-        calendar = cars[i].calendar;
-        calendar->vehicle1[month + day] = me.userid;
+        availablility = cars[i].calendar;
+        if (availablility->unit1[month + day] == 0){
+          availablility->unit2[month + day] = me.userid;
+        } else if (availablility->unit2[month + day] == 0){
+          availablility->unit2[month + day] = me.userid;
+        } else if (availablility->unit3[month + day] == 0){
+          availablility->unit3[month + day] = me.userid;
+        }
     }
 
     shmdt(cars);

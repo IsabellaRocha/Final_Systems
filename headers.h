@@ -34,9 +34,9 @@ struct vehicle {
 };
 
 struct calendar {
-  int vehicle1[365];
-  int vehicle2[365];
-  int vehicle2[365];
+  int unit1[365];
+  int unit2[365];
+  int unit3[365];
 };
 
 struct users {

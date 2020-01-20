@@ -13,37 +13,45 @@ int main() {
 }
 
 int my_write() {
-    semd = semget(KEY, 1, 0);
+    semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
-        printf("Error: %s", strerror(errno));
+        printf("semaphore error: %s", strerror(errno));
         return 1;
     }
     semop(semd, &sb, 1);
-    shmd = shmget(KEY, sizeof(char*), 0);
+    shmd = shmget(MEMKEY, sizeof(char*), 0);
     if (shmd < 0) {
-        printf("Error: %s", strerror(errno));
-        return 1;
-    }
-    shmd2 = shmget(KEY2, sizeof(char*), 0);
-    if (shmd2 < 0) {
-        printf("Error: %s", strerror(errno));
+        printf("memory error: %s", strerror(errno));
         return 1;
     }
 
-    struct vehicle* availableCars = (struct vehicle*) shmat(shmd, 0, 0);
-    struct vehicle* rentedCars = (struct vehicle*) shmat(shmd2, 0, 0);
+    struct vehicle* availablecars = (struct vehicle*) shmat(shmd, 0, 0);
 
-    int idx = 0;
-    for(idx; strcmp(rentedCars[idx].model, " ") != 0; idx++) {
-      if(strcmp(rentedCars[idx].model, me.rented.model) == 0) {
-        memcpy(&availableCars[idx], &rentedCars[idx], sizeof(struct vehicle));
-        struct vehicle temp = {"Empty", "Empty", 0, 0};
-        memcpy(&rentedCars[idx], &temp, sizeof(struct vehicle));
-        memcpy(&me.rented, &temp, sizeof(struct vehicle));
+    char input[SEG_SIZE];
+    printf("Hi! Can you confirm that you are here to return your car? (Y\\N): ")
+    fgets(input, SEG_SIZE, stdin);
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    int today_month = tm.tm_mon + 1;
+    int today_day = tm.tm_mday;
+
+    if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
+      struct vehicle = me.rented;
+
+      if(0){
+        printf("Your car is %d day late. Your fee is: %d. Would you like to confirm your payment? (Y\\N): ")
+        fgets(input, SEG_SIZE, stdin);
+      } else if(0){
+        printf("You still have %d days left until your rental expires. Would you like to still return the car? (Y\\N): ")
+        fgets(input, SEG_SIZE, stdin);
+      } else{
+        printf("Can you confirm the return of your car? (Y\\N): ")
       }
+    } else {
+      return;
     }
-    shmdt(availableCars);
-    shmdt(rentedCars);
+    
+    shmdt(cars);
 
     sb.sem_op = 1;
     semop(semd, &sb, 1);
