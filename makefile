@@ -1,20 +1,23 @@
-all: initialize.o user.o rent.o ret.o headers.h
-	gcc -o initialize initialize.o
-	gcc -o program user.o
+all: control.o user.o rent.o return_car.o parse.o headers.h
+	gcc -o control control.o
+	gcc -o program user.o parse.o
 	gcc -o rent rent.o
-	gcc -o ret ret.o
+	gcc -o return_car return_car.o
 
-initialize.o: initialize.c
-	gcc -c initialize.c
+control.o: control.c
+	gcc -c control.c
 
 user.o: user.c
 	gcc -c user.c
 
+parse.o: parse.c
+	gcc -c parse.c
+	
 rent.o: rent.c
 	gcc -c rent.c
 
-ret.o: ret.c
-	gcc -c ret.c
+return_car.o: return_car.c
+	gcc -c return_car.c
 
 run:
 	./program

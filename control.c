@@ -67,10 +67,7 @@ int setUpUsers(){
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }
-
-  struct users * users = (struct users*) shmat(shmd, 0, 0);
-
-  shmdt(users); //All cars start off as available
+  printf("shared memory created\n");
 
 }
 int viewAvailableCars(){
@@ -93,7 +90,7 @@ int viewAvailableCars(){
   printf("\x1b[H\x1b[J");
   printf("Available Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n");
   for(size_t i = 0; i < 10 && strcmp(availableCars[i].model, " ") != 0; i++) {
-    printf("- %s, %s, %d, $%d\n", availableCars[i].model, availableCars[i].color, availableCars[i].seatNumber, availableCars[i].cost);
+    printf("- %s, %s, %d seats, rental cost per day: $%d\n", availableCars[i].model, availableCars[i].color, availableCars[i].seatNumber, availableCars[i].cost);
   }
   printf("\nType 'back' to go back to the menu, or type rent if you'd like to rent out a car\n\n");
 
@@ -136,6 +133,8 @@ int execute (char *args[]){
   int debug = 0;
   if(strcmp(args[1],"-c")==0){
     debug = setUpCars();
+  } else if(strcmp(args[1],"-u")==0){
+    debug = setUpUsers();
   } else if(strcmp(args[1],"-r")==0){
     debug = removeCars();
   } else if(strcmp(args[1],"-va")==0){
@@ -156,8 +155,9 @@ int main(int argc, char *argv[]) {
   if(argc <= 1) {
     printf("%s\n", "You may access this Cars by using the following flags...");
     printf("%s\n", "\"-c\" to create Cars");
+    printf("%s\n", "\"-u\" to setup User Login System");
     printf("%s\n", "\"-r\" to remove Cars");
-    printf("%s\n", "\"-v\" to read Cars's contents");
+    printf("%s\n", "\"-va\" to read Cars's contents");
   } else {
     int executed = execute(argv);
   }

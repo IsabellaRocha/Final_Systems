@@ -9,8 +9,6 @@ int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
   char line[50];
 
-  int mem = createMem();
-
   memset(me.username, '\0', sizeof(me.username)); //Sets all values to null
   me.userid = 0;
   me.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
@@ -30,72 +28,7 @@ int main() {
   return 0;
 }
 
-char ** parse_args( char * line, char * delimiter ){ //For reading through the txt file of users
-    char * parse = removeSpace(line);
-    char ** args = malloc(1000 * sizeof(char *));
-  //  char * args[1000];
-    int c = 0;
-    char * token;
-    while (parse != NULL){
-        token = strsep(&parse, delimiter);
-        args[c] = token;
-        c++;
-    }
-    args[c] = NULL;
-    free(parse);
-    return args;
-}
 
-char * removeSpace(char * line) {
-    char arg[1000];
-    char newLine[1000];
-    strcpy(arg, line);
-    int idx = 0;
-    int cur = 0;
-    bool space = false;
-    while(idx < strlen(line) && arg[idx] == ' ') { //Get rid of leading spaces
-        idx++;
-    }
-    while(idx < strlen(line)) {
-        if(arg[idx] != ' ') {
-            space = false;
-            newLine[cur] = arg[idx];
-            cur++;
-            idx++;
-        }
-        if(arg[idx] == ' ' && space){
-            idx++;
-        }
-        if(arg[idx] == ' ' && !space) {
-            space = true;
-            newLine[cur] = arg[idx];
-            idx++;
-            cur++;
-        }
-    }
-    if(cur > 0 && newLine[cur - 1] == ' ') { //In case there's a space after the last charcter
-    newLine[cur - 1] = '\0';
-}
-newLine[cur] = '\0';
-char * parse = malloc(50 * sizeof(char));
-strcpy(parse, newLine);
-return parse;
-}
-
-int createMem() {
-  int status;
-  if(fork() == 0) {
-    char* args[] = {"./initialize", "-c", NULL};
-    int execute = execvp("./initialize", args);
-    if(execute < 0) {
-      printf("Error: %s", strerror(errno));
-      return 1;
-    }
-  }
-  else {
-    wait(&status);
-  }
-}
 void displayMenu() {
   printf("\x1b[H\x1b[J");
   printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Return a car\n- Log out\n\n");
@@ -107,7 +40,6 @@ int display(char * choice) {
   if(strcmp(choice, "exit") == 0) {
     running = false;
   }
-
   if(strcmp(choice, "log in") == 0) {
     printf("\x1b[H\x1b[J");
     printf("Username: ");
@@ -116,7 +48,7 @@ int display(char * choice) {
     }
   }
 
-  if(strcmp(choice, "create new account") == 0) {
+  if(strcmp(choice, "create new account") == 0 || strcmp(choice, "Create new account") == 0  ) {
     printf("\x1b[H\x1b[J");
     printf("Username: ");
     if(makeUser()) {
@@ -143,8 +75,8 @@ int display(char * choice) {
   if(strcmp(choice, "view available cars") == 0) {
     int status;
     if(fork() == 0) {
-      char* args[] = {"./initialize", "-va", NULL};
-      int execute = execvp("./initialize", args);
+      char* args[] = {"./control", "-va", NULL};
+      int execute = execvp("./control", args);
       if(execute < 0) {
         printf("Error: %s", strerror(errno));
         return 1;
@@ -157,8 +89,8 @@ int display(char * choice) {
   if(strcmp(choice, "view rented cars") == 0) {
     int status;
     if(fork() == 0) {
-      char* args[] = {"./initialize", "-vr", NULL};
-      int execute = execvp("./initialize", args);
+      char* args[] = {"./control", "-vr", NULL};
+      int execute = execvp("./control", args);
       if(execute < 0) {
         printf("Error: %s", strerror(errno));
         return 1;
