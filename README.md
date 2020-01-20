@@ -22,3 +22,5 @@ Team Members: Joseph Lee, Isabella Rocha
 * 1/15
   * Isabella: Logging in works now, edited headers file, stored username and password in struct after logging in to keep track of who's logged in, finished viewAccount, made it so if a username is taken, you cannot create another user with that username, fixed exiting the program, removed spaces from input in case user accidentally puts spaces before or after
   * Joseph: Fixed memory issue in removeSpace that prevented our user text file from having more than 55 characters
+* 1/19
+  * Joseph: Changed car storing format from available and rented out into one

@@ -5,9 +5,9 @@ union semun us;
 struct sembuf sb;
 
 int setUpCars(){
-  printf("creating Cars...\n\n");
+  printf("creating cars...\n\n");
   // creating semaphore
-  semd = semget(KEY, 1, IPC_CREAT | 0644);
+  semd = semget(SEMKEY, 1, IPC_CREAT | 0644);
   if (semd < 0) {
     printf("ayo");
     printf("error %d: %s\n", errno, strerror(errno));
@@ -15,45 +15,41 @@ int setUpCars(){
   }
   printf("semaphore created\n");
   semctl(semd, 0, SETVAL, us);
+
   //creating shared memory
-  shmd = shmget(KEY, sizeof(int) , IPC_CREAT | 0644);
+  shmd = shmget(MEMKEY, sizeof(int) , IPC_CREAT | 0644);
   if (shmd < 0){
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }
+  struct calendar[10] calendars;
+  for (size_t i = 0; i < 10; i++) {
+    int one[365] = { 0 };
+    int two[365] = { 0 };
+    int three[365] = { 0 };
+    struct calendar calendar = {one,two,three};
+    calendars[i] = calendar;
 
-  struct vehicle car1 = {"Toyota", "Blue", 5, 200};
-  struct vehicle car2 = {"Jeep", "Green", 5, 700};
-  struct vehicle car3 = {"Buick", "Gray", 5, 300};
-  struct vehicle car4 = {"Ford", "White", 5, 600};
-  struct vehicle car5 = {"BMW", "Blue", 5, 1000};
-  struct vehicle car6 = {"Volkswagen", "Red", 2, 500};
-  struct vehicle car7 = {"Subaru", "Gray", 8, 1200};
-  struct vehicle car8 = {"Tesla", "Black", 5, 1000};
-  struct vehicle car9 = {"Toyota", "Blue", 5, 500};
-  struct vehicle car10 = {"Lexus", "Blue", 8, 1500};
-  struct vehicle temp = {" ", " ", 0, 0};
+  }
+  struct vehicle car1 = {"Toyota", "Blue", 5, 200, calendars[0]};
+  struct vehicle car2 = {"Jeep", "Green", 5, 700, calendars[1]};
+  struct vehicle car3 = {"Buick", "Gray", 5, 300, calendars[2]};
+  struct vehicle car4 = {"Ford", "White", 5, 600, calendars[3]};
+  struct vehicle car5 = {"BMW", "Blue", 5, 1000, calendars[4]};
+  struct vehicle car6 = {"Volkswagen", "Red", 2, 500, calendars[5]};
+  struct vehicle car7 = {"Subaru", "Gray", 8, 1200, calendars[6]};
+  struct vehicle car8 = {"Tesla", "Black", 5, 1000, calendars[7]};
+  struct vehicle car9 = {"Toyota", "Blue", 5, 500, calendars[8]};
+  struct vehicle car10 = {"Lexus", "Blue", 8, 1500, calendars[9]};
 
-  struct vehicle *availableCars = (struct vehicle*) shmat(shmd, 0, 0);
-  struct vehicle cars[10] = {car1, car2, car3, car4, car5, car6, car7, car8, car9, car10};
-  int idx = 0;
-  for(idx; idx < 10; idx++) {
-    memcpy(&availableCars[idx], &cars[idx], sizeof(struct vehicle));
-  }
-  availableCars[idx] = temp;
-  shmdt(availableCars); //All cars start off as available
+  struct vehicle *cars = (struct vehicle*) shmat(shmd, 0, 0);
+  struct vehicle allcars[10] = {car1, car2, car3, car4, car5, car6, car7, car8, car9, car10};
 
-  shmd2 = shmget(KEY2, sizeof(int) , IPC_CREAT | 0644);
-  if (shmd2 < 0){
-    printf("error %d: %s\n", errno, strerror(errno));
-    return -1;
+  for(size_t i = 0; i < 10; i++) {
+    memcpy(&cars[i], &allcars[i], sizeof(struct vehicle));
   }
-  struct vehicle *rentedCars = (struct vehicle*) shmat(shmd2, 0, 0);
-  struct vehicle cars2[10] = {temp, temp, temp, temp, temp, temp, temp, temp, temp, temp};
-  int i = 0;
-  for(i; i < 10; i++) {
-    memcpy(&rentedCars[i], &cars2[i], sizeof(struct vehicle));
-  }
+
+  shmdt(cars); //All cars start off as available
 
   printf("shared memory created\n");
   //creating file
@@ -83,23 +79,14 @@ int viewRentedCars() {
 
 int removeCars(){
       // Print Contents
-      shmd = shmget(KEY, sizeof(int), 0);
+      shmd = shmget(MEMKEY, sizeof(int), 0);
       if (shmd< 0){
         printf("sharedy memory error %d: %s\n", errno, strerror(errno));
         return -1;
       }
       shmctl(shmd, IPC_RMID, 0);
 
-      shmd2 = shmget(KEY2, sizeof(int), 0);
-      if (shmd2< 0){
-        printf("sharedy memory error %d: %s\n", errno, strerror(errno));
-        return -1;
-      }
-      shmctl(shmd2, IPC_RMID, 0);
-
-      printf("shared memory removed\n");
-
-      semd = semget(KEY, 1, 0);
+      semd = semget(SEMKEY, 1, 0);
       if (semd< 0) {
         printf("error %d: %s\n", errno, strerror(errno));
         return -1;

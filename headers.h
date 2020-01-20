@@ -13,8 +13,8 @@
 #include <sys/shm.h>
 #include <sys/wait.h>
 
-#define KEY 24602
-#define KEY2 24603
+#define SEMKEY 24602
+#define MEMKEY 50298
 #define SEG_SIZE 1024
 
 union semun {
@@ -30,15 +30,17 @@ struct vehicle {
   char color[20];
   int seatNumber;
   int cost;
+  struct calendar * calendar;
 };
 
-struct day {
-  int car1;
-  int car2;
-  int car3;
+struct calendar {
+  int vehicle1[365];
+  int vehicle2[365];
+  int vehicle2[365];
 };
 
 struct users {
+  int userid;
   char username[20];
   char password[20];
   struct vehicle rented;
