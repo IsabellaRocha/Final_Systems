@@ -208,17 +208,20 @@ int makeUser() {
   bool exists = true;
   if(fopen("users.txt", "r") == NULL) {
     exists = false;
-    int fd = open("users.txt", O_CREAT|O_TRUNC, 0744);
+    int fd = open("users.txt", O_CREAT|O_TRUNC|O_WRONLY, 0744);
     if (fd < 0) {
       printf("Error: %s", strerror(errno));
       return 1;
     }
+    write(fd, "0", 1);
     close(fd);
   }
   //read first line of users.txt that will store the number of userss
-  int num_users = 0;
-
+  printf("f");
   int fd = open("users.txt", O_RDWR|O_APPEND);
+  char* num_user;
+  read(fd, num_user, 1);
+  int num_users = atoi(num_user);
   char input[50];
   fgets(input, 50, stdin);
   printf("\x1b[H\x1b[J");
@@ -226,24 +229,27 @@ int makeUser() {
   if ((checker = strchr(input, '\n')) != NULL) {
     *checker = '\0';
   }
-  char ** userID;
-  char check[SEG_SIZE];
-  check[0] = '\0';
-  read(fd, check, SEG_SIZE);
-  if (strlen(check) != 0) {
-    *(strrchr(check, '\n') + 1) = '\0';
-  }
-  userID = parse_args(check, "\n");
 
-  int idx = 0;
-  while(userID[idx] != NULL) {
-    char **args = parse_args(userID[idx], ",");
-    if(strcmp(input, args[0]) == 0) {
-      printf("\x1b[H\x1b[J");
-      printf("Username has already been taken, please try again\n\n");
-      return 0;
+  if(exists) {
+    char ** userID;
+    char check[SEG_SIZE];
+    check[0] = '\0';
+    read(fd, check, SEG_SIZE);
+    if (strlen(check) != 0) {
+      *(strrchr(check, '\n') + 1) = '\0';
     }
-    idx++;
+    userID = parse_args(check, "\n");
+    num_users += 1;
+    int idx = 0;
+    while(userID[idx] != NULL) {
+      char **args = parse_args(userID[idx], ",");
+      if(strcmp(input, args[0]) == 0) {
+        printf("\x1b[H\x1b[J");
+        printf("Username has already been taken, please try again\n\n");
+        return 0;
+      }
+      idx++;
+    }
   }
 
   //after username and passwords are confirmed, store username's other info in shared memory
@@ -266,8 +272,19 @@ int makeUser() {
   users[num_users] = user;
 
   strcpy(me.username, input);
+  char update[SEG_SIZE];
+  read(fd, update, SEG_SIZE);
+  if (strlen(update) != 0) {
+    *(strrchr(update, '\n') + 1) = '\0';
+  }
+
+  char first[9];
+  sprintf(first, "%d", num_users);
+  write(fd, first, 1);
+  char *new = update + 2;
   strncat(input, ",", 1);
-  write(fd, input, strlen(input));
+  strncat(new, input, strlen(input));
+  write(fd, new, strlen(new));
 
   printf("\x1b[H\x1b[J");
   printf("Password: ");
