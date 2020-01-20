@@ -1,7 +1,6 @@
 #include "headers.h"
 int shmd, shmd2, semd;
 struct sembuf sb;
-int my_write();
 struct users me;
 
 int main() {

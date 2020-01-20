@@ -226,25 +226,25 @@ int makeUser() {
   if ((checker = strchr(input, '\n')) != NULL) {
     *checker = '\0';
   }
-    char ** userID;
-    char check[SEG_SIZE];
-    check[0] = '\0';
-    read(fd, check, SEG_SIZE);
-    if (strlen(check) != 0) {
-      *(strrchr(check, '\n') + 1) = '\0';
-    }
-    userID = parse_args(check, "\n");
+  char ** userID;
+  char check[SEG_SIZE];
+  check[0] = '\0';
+  read(fd, check, SEG_SIZE);
+  if (strlen(check) != 0) {
+    *(strrchr(check, '\n') + 1) = '\0';
+  }
+  userID = parse_args(check, "\n");
 
-    int idx = 0;
-    while(userID[idx] != NULL) {
-      char **args = parse_args(userID[idx], ",");
-      if(strcmp(input, args[0]) == 0) {
-        printf("\x1b[H\x1b[J");
-        printf("Username has already been taken, please try again\n\n");
-        return 0;
-      }
-      idx++;
+  int idx = 0;
+  while(userID[idx] != NULL) {
+    char **args = parse_args(userID[idx], ",");
+    if(strcmp(input, args[0]) == 0) {
+      printf("\x1b[H\x1b[J");
+      printf("Username has already been taken, please try again\n\n");
+      return 0;
     }
+    idx++;
+  }
 
   //after username and passwords are confirmed, store username's other info in shared memory
   semd = semget(SEM2KEY, 1, 0);
@@ -261,7 +261,8 @@ int makeUser() {
 
   struct users * users = (struct users*) shmat(shmd, 0, 0);
   struct vehicle car= {" ", " ", 0, 0, {0,0,0}};
-  struct users user= {0,input,car,5000};
+  struct users user= {.userid = 0,.rented = car,.balance = 5000};
+  strcpy(user.username,input);
   users[num_users] = user;
 
   strcpy(me.username, input);
