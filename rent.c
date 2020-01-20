@@ -28,22 +28,22 @@ int my_write() {
     struct vehicle * cars = (struct vehicle*) shmat(shmd, 0, 0);
 
 
-    char str_start_date[SEG_SIZE];
-    char str_end_date[SEG_SIZE];
+    char *start_date1;
+    char *end_date1;
     char car[SEG_SIZE];
-    printf("Hi! During which days are you interested in borrowing a car?\n")
+    printf("Hi! During which days are you interested in borrowing a car?\n");
     printf("We ask that you enter dates in the format of MM-DD\nStarting date:");
-    fgets(str_start_date, SEG_SIZE, stdin);
+    fgets(start_date1, SEG_SIZE, stdin);
     printf("\nEnding date:");
-    fgets(str_end_date, SEG_SIZE, stdin);
+    fgets(end_date1, SEG_SIZE, stdin);
 
-    char ** str_start_date = parse_args(str_start_date,'-');
-    char ** str_end_date = parse_args(str_end_date,'-');
+    char ** str_start_date = parse_args(start_date1,"-");
+    char ** str_end_date = parse_args(end_date1,"-");
 
-    int start_month = atoi(str_start_date[0])
-    int start_day = atoi(str_start_date[1])
-    int end_month = atoi(str_end_date[0])
-    int end_day = atoi(str_end_date[1])
+    int start_month = atoi(str_start_date[0]);
+    int start_day = atoi(str_start_date[1]);
+    int end_month = atoi(str_end_date[0]);
+    int end_day = atoi(str_end_date[1]);
 
     if(start_month == 2){
       start_month = start_month * 29;
@@ -67,7 +67,7 @@ int my_write() {
 
     int unit =0;
     for (size_t i = 0; i < 10; i++) {
-      struct calendar * availablility = cars[i].calendar;
+      struct calendar * availablility = &cars[i].calendar;
       int available = 0;
       for (size_t i = start_date; i < end_date + 1 && availablility->unit1[i] == 0; i++) {
         if(i == end_date){
@@ -112,9 +112,9 @@ int my_write() {
       fgets(car, SEG_SIZE, stdin);
       int i = 0;
       for( i = 0; i < 10; i++){
-        if (strcmp(cars[i].model, input) == 0){
-          chosen_car = cars[i];
-        } else if (strcmp(cars[i].model, input) == "return"){
+        if (strcmp(cars[i].model, car) == 0){
+          chosen_car = &cars[i];
+        } else if (strcmp(cars[i].model, car) == "return"){
           //if user would like to cancel renting  car, go back to the menu screen
           return 1;
         }
@@ -125,22 +125,22 @@ int my_write() {
     }
 
     char input[SEG_SIZE];
-    int cost = chosen_car.cost * (end_date - start_date);
+    int cost = chosen_car->cost * (end_date - start_date);
     printf("The final price for the rental is: %d\nWould you like to continue with your purchase? (Y\\N)\n", cost);
     fgets(input, SEG_SIZE, stdin);
     if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
       me.balance -= cost;
       if(unit == 1){
         for (size_t i = start_date; i < end_date; i++) {
-          chosen_car.calendar.unit1[i] = me.userid;
+          chosen_car->calendar.unit1[i] = me.userid;
         }
       } else if(unit == 2){
         for (size_t i = start_date; i < end_date; i++) {
-          chosen_car.calendar.unit2[i] = me.userid;
+          chosen_car->calendar.unit2[i] = me.userid;
         }
-      } else if if(unit == 3){
+      } else if(unit == 3){
         for (size_t i = start_date; i < end_date; i++) {
-          chosen_car.calendar.unit3[i] = me.userid;
+          chosen_car->calendar.unit3[i] = me.userid;
         }
       }
       memcpy(&me.rented, &chosen_car, sizeof(struct vehicle));
