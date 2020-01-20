@@ -83,7 +83,7 @@ int viewAvailableCars(){
   }
   semop(semd,&sb,1);
 
-  shmd=shmget(MEMKEY,sizeof(int),0);
+  shmd=shmget(MEMKEY,sizeof(struct vehicle) * 10,0);
   if(shmd < 0){
     printf("shared memory Error: %s\n", strerror(shmd));
     return -1;
