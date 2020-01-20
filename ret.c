@@ -8,11 +8,11 @@ int main() {
   sb.sem_num = 0;
   //sb.sem_flg = SEM_UNDO;
   sb.sem_op = -1;
-  my_write();
+  return_car();
   return 0;
 }
 
-int my_write() {
+int return_car() {
     semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
         printf("semaphore error: %s", strerror(errno));
@@ -39,16 +39,16 @@ int my_write() {
       struct vehicle car = me.rented;
 
       if(0){
-        printf("Your car is %d days late. Your fee is: %d. Would you like to confirm your payment? (Y\\N): ");
+        printf("Your car is %d days late. Your fee is: %d. Would you like to confirm your payment? (Y\\N): ",5,6);
         fgets(input, SEG_SIZE, stdin);
       } else if(0){
-        printf("You still have %d days left until your rental expires. Would you like to still return the car? (Y\\N): ");
+        printf("You still have %d days left until your rental expires. Would you like to still return the car? (Y\\N): ",6);
         fgets(input, SEG_SIZE, stdin);
       } else{
         printf("Can you confirm the return of your car? (Y\\N): ");
       }
     } else {
-      return;
+      return 1;
     }
 
     shmdt(cars);

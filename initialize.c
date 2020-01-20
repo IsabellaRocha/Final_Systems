@@ -1,5 +1,4 @@
 #include "headers.h"
-
 int semd, shmd, shmd2, fd; // desecriptors
 union semun us;
 struct sembuf sb;
@@ -17,7 +16,7 @@ int setUpCars(){
   semctl(semd, 0, SETVAL, us);
 
   //creating shared memory
-  shmd = shmget(MEMKEY, sizeof(int) , IPC_CREAT | 0644);
+  shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10 , IPC_CREAT | 0644);
   if (shmd < 0){
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
@@ -68,12 +67,6 @@ int setUpUsers(){
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }
-  struct users {
-    int userid;
-    char username[20];
-    struct vehicle rented;
-    int balance;
-  };
 
   struct users * users = (struct users*) shmat(shmd, 0, 0);
 
@@ -81,14 +74,32 @@ int setUpUsers(){
 
 }
 int viewAvailableCars(){
+  //catching for errors
+  printf("trying to get in...\n");
+  semd=semget(SEMKEY,1,0);
+  if(semd < 0){
+    printf("semaphore Error: %s\n", strerror(semd));
+    return -1;
+  }
+  semop(semd,&sb,1);
+
+  shmd=shmget(MEMKEY,sizeof(int),0);
+  if(shmd < 0){
+    printf("shared memory Error: %s\n", strerror(shmd));
+    return -1;
+  }
+
   struct vehicle* availableCars = shmat(shmd, 0, 0);
-  int idx = 0;
   printf("\x1b[H\x1b[J");
   printf("Available Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n");
-  for(idx; strcmp(availableCars[idx].model, " ") != 0; idx++) {
-    printf("- %s, %s, %d, $%d\n", availableCars[idx].model, availableCars[idx].color, availableCars[idx].seatNumber, availableCars[idx].cost);
+  for(size_t i = 0; i < 10 && strcmp(availableCars[i].model, " ") != 0; i++) {
+    printf("- %s, %s, %d, $%d\n", availableCars[i].model, availableCars[i].color, availableCars[i].seatNumber, availableCars[i].cost);
   }
   printf("\nType 'back' to go back to the menu, or type rent if you'd like to rent out a car\n\n");
+
+  shmdt(availableCars);
+  sb.sem_op=1;
+  semop(semd,&sb,1);
 }
 
 int viewRentedCars() {

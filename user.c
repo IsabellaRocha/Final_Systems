@@ -199,9 +199,6 @@ int display(char * choice) {
   return 0;
 }
 
-
-void rent();
-
 void logout() {
   memset(me.username, '\0', 20);
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
@@ -222,8 +219,8 @@ int makeUser() {
   int num_users = 0;
 
   int fd = open("users.txt", O_RDWR|O_APPEND);
-  char input[SEG_SIZE];
-  fgets(input, SEG_SIZE, stdin);
+  char input[50];
+  fgets(input, 50, stdin);
   printf("\x1b[H\x1b[J");
   char * checker;
   if ((checker = strchr(input, '\n')) != NULL) {
@@ -256,14 +253,15 @@ int makeUser() {
       return 1;
   }
   semop(semd, &sb, 1);
-  shmd = shmget(MEM2KEY, sizeof(char*), 0);
+  shmd = shmget(MEM2KEY, sizeof(struct users) * 100, 0);
   if (shmd < 0) {
       printf("memory error: %s", strerror(errno));
       return 1;
   }
 
   struct users * users = (struct users*) shmat(shmd, 0, 0);
-  struct users user= {(num_users+1),input,{" ", " ", 0, 0, {0,0,0}},5000};
+  struct vehicle car= {" ", " ", 0, 0, {0,0,0}};
+  struct users user= {0,input,car,5000};
   users[num_users] = user;
 
   strcpy(me.username, input);

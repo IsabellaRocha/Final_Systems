@@ -1,4 +1,4 @@
-all: initialize.o user.o rent.o ret.o
+all: initialize.o user.o rent.o ret.o headers.h
 	gcc -o initialize initialize.o
 	gcc -o program user.o
 	gcc -o rent rent.o

@@ -8,7 +8,7 @@ int main() {
   sb.sem_num = 0;
   //sb.sem_flg = SEM_UNDO;
   sb.sem_op = -1;
-  my_write();
+  rent();
   return 0;
 }
 
@@ -64,7 +64,7 @@ strcpy(parse, newLine);
 return parse;
 }
 
-int my_write() {
+int rent() {
     semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
         printf("semaphore error: %s", strerror(errno));
@@ -166,7 +166,7 @@ int my_write() {
       for( i = 0; i < 10; i++){
         if (strcmp(cars[i].model, car) == 0){
           chosen_car = &cars[i];
-        } else if (strcmp(cars[i].model, car) == "return"){
+        } else if (strcmp(car, "back") == 0){
           //if user would like to cancel renting  car, go back to the menu screen
           return 1;
         }

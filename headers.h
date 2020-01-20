@@ -44,7 +44,7 @@ struct vehicle {
 
 struct users {
   int userid;
-  char username[20];
+  char username[50];
   struct vehicle rented;
   int balance;
 };
@@ -60,7 +60,8 @@ int makeUser();
 int makePassword();
 int display(char * choice);
 void displayMenu();
-void rent();
+int return_car();
+int rent();
 void logout();
 int verifyUser();
 void viewAccount();
