@@ -15,6 +15,8 @@
 
 #define SEMKEY 24602
 #define MEMKEY 50298
+#define SEM2KEY 17602
+#define MEM2KEY 54268
 #define SEG_SIZE 1024
 
 union semun {
@@ -42,7 +44,6 @@ struct calendar {
 struct users {
   int userid;
   char username[20];
-  char password[20];
   struct vehicle rented;
   int balance;
 };

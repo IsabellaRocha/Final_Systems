@@ -54,7 +54,35 @@ int setUpCars(){
   printf("shared memory created\n");
   //creating file
 }
+int setUpUsers(){
+  // creating semaphore
+  semd = semget(SEM2KEY, 1, IPC_CREAT | 0644);
+  if (semd < 0) {
+    printf("ayo");
+    printf("error %d: %s\n", errno, strerror(errno));
+    return -1;
+  }
+  printf("semaphore created\n");
+  semctl(semd, 0, SETVAL, us);
 
+  //creating shared memory
+  shmd = shmget(MEM2KEY, 100 * sizeof(struct users) , IPC_CREAT | 0644);
+  if (shmd < 0){
+    printf("error %d: %s\n", errno, strerror(errno));
+    return -1;
+  }
+  struct users {
+    int userid;
+    char username[20];
+    struct vehicle rented;
+    int balance;
+  };
+
+  struct users * users = (struct users*) shmat(shmd, 0, 0);
+
+  shmdt(users); //All cars start off as available
+
+}
 int viewAvailableCars(){
   struct vehicle* availableCars = shmat(shmd, 0, 0);
   int idx = 0;

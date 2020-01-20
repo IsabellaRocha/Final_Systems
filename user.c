@@ -1,5 +1,4 @@
 #include "headers.h"
-
 struct users me;
 struct vehicle temp = {" ", " ", 0, 0};
 bool running = true;
@@ -11,8 +10,7 @@ int main() {
   int mem = createMem();
 
   memset(me.username, '\0', 20); //Sets all values to null
-  memset(me.password, '\0', 20);
-  me.rented = temp;
+  me.rented = 0;
   me.balance = 0;
 
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
@@ -217,6 +215,8 @@ int makeUser() {
     }
     close(fd);
   }
+  //read first line of users.txt that will store the number of userss
+  int num_users = 0;
 
   int fd = open("users.txt", O_RDWR|O_APPEND);
   char input[SEG_SIZE];
@@ -246,7 +246,26 @@ int makeUser() {
       }
       idx++;
     }
+    //after username and passwords are confirmed, store username's other info in shared memory
+    semd = semget(SEM2KEY, 1, 0);
+    if (semd < 0) {
+        printf("semaphore error: %s", strerror(errno));
+        return 1;
+    }
+    semop(semd, &sb, 1);
+    shmd = shmget(MEM2KEY, sizeof(char*), 0);
+    if (shmd < 0) {
+        printf("memory error: %s", strerror(errno));
+        return 1;
+    }
+
+    struct users * users = (struct vehicle*) shmat(shmd, 0, 0);
+    struct user user= {num_users+1,input,NULL,5000};
+    users[num_users] = user;
   }
+
+
+  //
 
   strcpy(me.username, input);
   strncat(input, ",", 1);
@@ -257,8 +276,14 @@ int makeUser() {
   char input2[SEG_SIZE];
   fgets(input2, SEG_SIZE, stdin);
   write(fd, input2, strlen(input2));
-  strcpy(me.password, input2);
   me.balance = 5000;
+
+  //close semaphores and shared memory
+
+  shmdt(users);
+
+  sb.sem_op = 1;
+  semop(semd, &sb, 1);
 
   close(fd);
   return 1;
@@ -300,7 +325,6 @@ int verifyUser() {
       }
       if(strcmp(input2, args[1]) == 0) {
         strcpy(me.username, input);
-        strcpy(me.password, input2);
         return 1;
       }
     }
@@ -314,7 +338,6 @@ int verifyUser() {
 
 void viewAccount() {
   printf("Username: %s\n", me.username);
-  printf("Password: %s\n", me.password);
   printf("Current car: %s\n", me.rented.model);
   printf("Current balance: $%d\n", me.balance);
   printf("Type 'back' to go back to the menu\n\n");
