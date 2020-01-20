@@ -140,17 +140,19 @@ int makeUser() {
   bool exists = true;
   if(fopen("users.txt", "r") == NULL) {
     exists = false;
-    int fd = open("users.txt", O_CREAT|O_TRUNC|O_WRONLY, 0744);
+    int fd = open("users.txt", O_CREAT|O_TRUNC, 0744);
     if (fd < 0) {
       printf("Error: %s", strerror(errno));
       return 1;
     }
+    close(fd);
+    fd = open("users.txt", O_WRONLY);
     write(fd, "0", 1);
     close(fd);
   }
   //read first line of users.txt that will store the number of userss
   printf("f");
-  int fd = open("users.txt", O_RDWR|O_APPEND);
+  int fd = open("users.txt", O_RDWR);
   char* num_user;
   read(fd, num_user, 1);
   int num_users = atoi(num_user);
@@ -210,9 +212,14 @@ int makeUser() {
     *(strrchr(update, '\n') + 1) = '\0';
   }
 
+  close(fd);
+
+  fd = open("users.txt", O_WRONLY);
   char first[9];
   sprintf(first, "%d", num_users);
   write(fd, first, 1);
+  close(fd);
+  fd = open("users.txt", O_WRONLY|O_APPEND);
   char *new = update + 2;
   strncat(input, ",", 1);
   strncat(new, input, strlen(input));
