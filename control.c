@@ -112,13 +112,13 @@ int viewRentedCars() {
 
 int removeCars(){
       // Print Contents
-      shmd = shmget(MEMKEY, sizeof(int), 0);
+      shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10 , 0);
       if (shmd< 0){
         printf("sharedy memory error %d: %s\n", errno, strerror(errno));
         return -1;
       }
       shmctl(shmd, IPC_RMID, 0);
-
+      printf("shared memory removed\n");
       semd = semget(SEMKEY, 1, 0);
       if (semd< 0) {
         printf("error %d: %s\n", errno, strerror(errno));
