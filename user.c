@@ -140,7 +140,7 @@ int makeUser() {
 
   sb2.sem_num=0;
   sb2.sem_op = -1;
-  sb2.sem_flg = SEM_UNDO;
+  //sb2.sem_flg = SEM_UNDO;
   // after username and passwords are confirmed, store username's other info in shared memory
   semd = semget(SEM2KEY, 1, 0);
   if (semd < 0) {
@@ -163,7 +163,7 @@ int makeUser() {
 
   me.userid = num_users;
   me.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
-  me.balance = 5000;
+  me.balance = 10000;
   me.start_rent_month = 0;
   me.start_rent_day = 0;
   me.end_rent_month = 0;
@@ -244,7 +244,7 @@ int verifyUser() {
       if(strcmp(input2, args[1]) == 0) {
         sb2.sem_num=0;
         sb2.sem_op =-1;
-        sb2.sem_flg = SEM_UNDO;
+        //sb2.sem_flg = SEM_UNDO;
         // after username and passwords are confirmed, store username's other info in shared memory
         semd = semget(SEM2KEY, 1, 0);
         if (semd < 0) {
@@ -259,7 +259,7 @@ int verifyUser() {
         }
         struct users * users = shmat(shmd, 0, 0);
         // struct users * user = &users[idx];
-        memcpy(&me,&users[idx],sizeof(struct user*));
+        memcpy(&me,&users[idx],sizeof(struct users));
         // strcpy(me.username, user->username);
         // me.userid = user->userid;
         // me.rented = user->rented;
@@ -282,7 +282,7 @@ int verifyUser() {
 void logout() {
   sb2.sem_num=0;
   sb2.sem_op = -1;
-  sb2.sem_flg = SEM_UNDO;
+  //sb2.sem_flg = SEM_UNDO;
   // after username and passwords are confirmed, store username's other info in shared memory
   semd = semget(SEM2KEY, 1, 0);
   if (semd < 0) {

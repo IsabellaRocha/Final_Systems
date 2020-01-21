@@ -3,7 +3,7 @@
 int rent() {
     sb1.sem_num=0;
     sb1.sem_op = -1;
-    sb1.sem_flg = SEM_UNDO;
+    //sb1.sem_flg = SEM_UNDO;
     semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
         printf("semaphore error: %s", strerror(errno));

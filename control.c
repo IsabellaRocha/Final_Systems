@@ -163,10 +163,10 @@ int main(int argc, char *argv[]) {
   us2.val=1;
   sb1.sem_num=0;
   sb1.sem_op =-1;
-  sb1.sem_flg = SEM_UNDO;
+  //sb1.sem_flg = SEM_UNDO;
   sb2.sem_num=0;
   sb2.sem_op =-1;
-  sb2.sem_flg = SEM_UNDO;
+  //sb2.sem_flg = SEM_UNDO;
   if(argc <= 1) {
     printf("%s\n", "You may access this Cars by using the following flags...");
     printf("%s\n", "\"-c\" to create Cars and User Login System");
