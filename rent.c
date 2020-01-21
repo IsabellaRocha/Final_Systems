@@ -132,6 +132,10 @@ int rent() {
     int cost = chosen_car->cost * (end_date - start_date);
     printf("The final price for the rental is: %d\nWould you like to continue with your purchase? (Y\\N)\n", cost);
     fgets(input, SEG_SIZE, stdin);
+    if (strlen(input) != 0) {
+      input[strlen(input)-1] = '\0';
+    }
+    printf("%d\n",unit);
     if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
       me.balance -= cost;
       if(unit == 1){
@@ -148,6 +152,7 @@ int rent() {
         }
       }
       memcpy(&me.rented, &chosen_car, sizeof(struct vehicle));
+      printf("Your purchase has been successful\n");
     } else{
       printf("Your purchase has been cancelled, please type back\n\n");
       return 1;
@@ -158,5 +163,5 @@ int rent() {
     sb.sem_op = 1;
     semop(semd, &sb, 1);
     printf("\n");
-    return 0;
+    return 1;
 }
