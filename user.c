@@ -243,7 +243,7 @@ int verifyUser() {
       if(strcmp(input2, args[1]) == 0) {
         sb2.sem_num=0;
         sb2.sem_op =-1;
-        //sb2.sem_flg = SEM_UNDO;
+        sb2.sem_flg = SEM_UNDO;
         // after username and passwords are confirmed, store username's other info in shared memory
         semd = semget(SEM2KEY, 1, 0);
         if (semd < 0) {
