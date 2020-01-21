@@ -209,7 +209,6 @@ int makeUser() {
   close(fd);
   fd = open("users.txt", O_RDWR | O_TRUNC);
   write(fd, update, strlen(update));
-  me.balance = 5000;
 
   //close semaphores and shared memory
 

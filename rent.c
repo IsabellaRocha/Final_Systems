@@ -149,7 +149,7 @@ int rent() {
       }
       memcpy(&me.rented, &chosen_car, sizeof(struct vehicle));
     } else{
-      printf("Your purchase has been cancelled\n");
+      printf("Your purchase has been cancelled, please type back\n\n");
       return 1;
     }
 

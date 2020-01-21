@@ -49,15 +49,7 @@ struct users {
   int balance;
 };
 
-extern struct users me;
-/*struct month {
-  int numDays;
-  struct day days[numDays];
-  char name[20];
-}; */
-
 int makeUser();
-int makePassword();
 int display(char * choice);
 void displayMenu();
 int return_car();
@@ -67,9 +59,3 @@ int verifyUser();
 void viewAccount();
 char ** parse_args(char * line, char * delimiter);
 char * removeSpace(char * line);
-int createMem();
-/*int setUpCars();
-void viewAvailableCars();
-void viewRentedCars();
-int removeCars();
-int execute();*/
