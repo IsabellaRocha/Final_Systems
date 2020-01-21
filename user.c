@@ -135,7 +135,7 @@ int makeUser() {
   char* str_num_user;
 
   if(fopen("users.txt", "r") == NULL) {
-    printf("creating users.txt");
+    //printf("creating users.txt");
     exists = false;
     int fd = open("users.txt", O_CREAT|O_TRUNC|O_WRONLY, 0744);
     if (fd < 0) {
@@ -160,7 +160,7 @@ int makeUser() {
     char ** args;
     read(fd, buffer, 1);
     read(fd, buffer, SEG_SIZE);
-    printf("buffer %s\n",buffer);
+    // printf("buffer %s\n",buffer);
     userID = parse_args(buffer, "\n");
     for (size_t i = 0; i < num_users; i++) {
         args = parse_args(userID[i], ",");
