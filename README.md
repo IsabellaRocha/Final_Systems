@@ -3,6 +3,17 @@
 ## Project: Car Rental Management System ##
 Team Members: Joseph Lee, Isabella Rocha
 
+Our project is a management system for a hypothetical car rental service. Users may rent and return cars. Users may request specific models and may specify on what days they will need it. Users may also cancel requests and return the cars earlier. However, if all cars available in that model are currently rented out, they will have to wait for a car to be returned if they want to rent it.
+
+Instructions:
+* When you are opening the program for the first time, please run make in order to compile all the files, and then run ./control -c in order to create the shared memory
+* After that, simply run make run and follow the prompts on the screen, making sure to type your inputs in all lower case
+
+Features:
+* Creating and logging into accounts using files
+* Renting and returning cars using shared memory and semaphores
+* Running subprocesses using exec and forking
+
 # Devlog #
 * 1/5
   * Isabella: Created a headers file with a vehicle struct and a make file
@@ -22,5 +33,8 @@ Team Members: Joseph Lee, Isabella Rocha
 * 1/15
   * Isabella: Logging in works now, edited headers file, stored username and password in struct after logging in to keep track of who's logged in, finished viewAccount, made it so if a username is taken, you cannot create another user with that username, fixed exiting the program, removed spaces from input in case user accidentally puts spaces before or after
   * Joseph: Fixed memory issue in removeSpace that prevented our user text file from having more than 55 characters
+* 1/17
+  * Isabella: Created separate shared memories for rented cars and available cars
 * 1/19
+  * Isabella: Added cars to our shared memory, got viewing available cars to work, edited how our shared memory works, updated the users struct, utilized forking and execvp to access shared memory commands in our rent and return files
   * Joseph: Changed car storing, shared memory, and semaphore structure to allow renting out by days and months. Continued working on the renting car prompts and returning car structure/format/prompts
