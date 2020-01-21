@@ -1,5 +1,5 @@
 #include "headers.h"
-struct users me;
+struct users me,user;
 bool running = true;
 int semd, shmd, shmd2, fd; // desecriptors
 union semun us;
@@ -8,11 +8,6 @@ struct sembuf sb;
 int main() {
   printf("\x1b[H\x1b[J"); //Clears screen
   char line[50];
-
-  memset(me.username, '\0', sizeof(me.username)); //Sets all values to null
-  me.userid = 0;
-  me.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
-  me.balance = 0;
 
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
 
@@ -30,7 +25,7 @@ int main() {
 
 
 void displayMenu() {
-  //printf("\x1b[H\x1b[J");
+  printf("\x1b[H\x1b[J");
   printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Return a car\n- Log out\n\n");
 }
 
@@ -151,15 +146,15 @@ int makeUser() {
     close(fd);
   }
   //read first line of users.txt that will store the number of userss
-  printf("reading users.txt\n");
   int fd = open("users.txt", O_RDWR);
   read(fd, str_num_user, 1);
   int num_users = atoi(str_num_user);
-  printf("%d\n",num_users);
+  //printf("%d\n",num_users);
   fgets(input, 50, stdin);
-  // printf("\x1b[H\x1b[J");
-  printf("%s\n",input);
-  input[strlen(input)-1] = '\0';
+  printf("\x1b[H\x1b[J");
+  if (strlen(input) != 0) {
+    input[strlen(input)-1] = '\0';
+  }
   if(exists) {
     char ** userID;
     char ** args;
@@ -170,7 +165,7 @@ int makeUser() {
     for (size_t i = 0; i < num_users; i++) {
         args = parse_args(userID[i], ",");
         if(strcmp(input, args[0]) == 0) {
-          //printf("\x1b[H\x1b[J");
+          printf("\x1b[H\x1b[J");
           printf("Username has already been taken, please try again\n\n");
           return 0;
         }
@@ -178,7 +173,6 @@ int makeUser() {
   }
   num_users += 1;
 
-  printf("now creating account\n");
   sb.sem_num=0;
   sb.sem_op = -1;
   sb.sem_flg = SEM_UNDO;
@@ -195,11 +189,17 @@ int makeUser() {
       return 1;
   }
 
-  // struct users * users = (struct users*) shmat(shmd, 0, 0);
-  // struct vehicle car= {" ", " ", 0, 0, {0,0,0}};
-  // struct users user= {.userid = 0,.rented = car,.balance = 5000};
-  // strcpy(user.username,input);
-  // users[num_users] = user;
+  struct users * users = (struct users*) shmat(shmd, 0, 0);
+  user.userid = num_users;
+  user.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
+  user.balance = 5000;
+  strcpy(user.username,input);
+  users[num_users-1] = user;
+
+  me.userid = num_users;
+  me.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
+  me.balance = 5000;
+  strcpy(me.username,input);
 
   //printf("%s\n",buffer);
   // if (strlen(buffer) != 0) {
@@ -210,21 +210,15 @@ int makeUser() {
   memset (update, 0, SEG_SIZE );
   sprintf(update, "%d\n", num_users);
   strcat(update, buffer);
-
-
-  if (strlen(input) != 0) {
-    input[strlen(input)-1] = '\0';
-  }
   strcat(update, input);
   strcat(update, ",");
 
-  //printf("\x1b[H\x1b[J");
+  printf("\x1b[H\x1b[J");
   printf("Password: ");
   memset (input, 0, 50 );
   fgets(input, 50, stdin);
 
   strcat(update,input);
-  strcat(update,"\n");
 
   close(fd);
   fd = open("users.txt", O_RDWR | O_TRUNC);
@@ -233,7 +227,7 @@ int makeUser() {
 
   //close semaphores and shared memory
 
-  // shmdt(users);
+  shmdt(users);
 
   sb.sem_op = 1;
   semop(semd, &sb, 1);
@@ -252,9 +246,10 @@ int verifyUser() {
 
   char check[SEG_SIZE];
   check[0] = '\0';
+  read(fd, check, 2);
   read(fd, check, SEG_SIZE);
   if (strlen(check) != 0) {
-    *(strrchr(check, '\n') + 1) = '\0';
+    check[strlen(check)-1] = '\0';
   }
   userID = parse_args(check, "\n");
   char input[SEG_SIZE];
@@ -277,10 +272,32 @@ int verifyUser() {
         *checker = '\0';
       }
       if(strcmp(input2, args[1]) == 0) {
-        strcpy(me.username, input);
-        //me.userid =
-        //me.rented =
-        //me.balance =
+        sb.sem_num=0;
+        sb.sem_op = -1;
+        sb.sem_flg = SEM_UNDO;
+        // after username and passwords are confirmed, store username's other info in shared memory
+        semd = semget(SEM2KEY, 1, 0);
+        if (semd < 0) {
+            printf("semaphore error: %s", strerror(errno));
+            return 1;
+        }
+        semop(semd, &sb, 1);
+        shmd = shmget(MEM2KEY, sizeof(struct users) * 100, 0);
+        if (shmd < 0) {
+            printf("memory error: %s", strerror(errno));
+            return 1;
+        }
+        struct users * users = (struct users*) shmat(shmd, 0, 0);
+        user = users[idx];
+        strcpy(me.username, user.username);
+        me.userid = user.userid;
+        me.rented = user.rented;
+        me.balance = user.balance;
+
+        shmdt(users);
+
+        sb.sem_op = 1;
+        semop(semd, &sb, 1);
         return 1;
       }
     }
@@ -293,6 +310,30 @@ int verifyUser() {
 }
 
 void logout() {
+  sb.sem_num=0;
+  sb.sem_op = -1;
+  sb.sem_flg = SEM_UNDO;
+  // after username and passwords are confirmed, store username's other info in shared memory
+  semd = semget(SEM2KEY, 1, 0);
+  if (semd < 0) {
+      printf("semaphore error: %s", strerror(errno));
+      return;
+  }
+  semop(semd, &sb, 1);
+  shmd = shmget(MEM2KEY, sizeof(struct users) * 100, 0);
+  if (shmd < 0) {
+      printf("memory error: %s", strerror(errno));
+      return;
+  }
+  struct users * users = (struct users*) shmat(shmd, 0, 0);
+  user = users[me.userid];
+  user.rented = me.rented;
+  user.balance = me.balance;
+
+  shmdt(users);
+
+  sb.sem_op = 1;
+  semop(semd, &sb, 1);
   memset(me.username, '\0', 20);
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
 }
