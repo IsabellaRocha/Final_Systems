@@ -8,6 +8,7 @@ Our project is a management system for a hypothetical car rental service. Users 
 ### Instructions ###
 * When you are opening the program for the first time, please run make in order to compile all the files, and then run ./control -c in order to create the shared memory
 * After that, simply run make run and follow the prompts on the screen and enter responses in the requested format, separating dates by dash and making sure to type your inputs in all lower case except when typing in the car model: type that exactly as it appears on screen
+* If the instructions are not clear on what to do next after you've finished an operation, enter 'back' to return to the display menu
 
 
 ### Features ###

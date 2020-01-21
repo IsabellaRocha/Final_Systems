@@ -154,7 +154,7 @@ int makeUser() {
       return 1;
   }
 
-  struct users * users = (struct users*) shmat(shmd, 0, 0);
+  struct users * users = shmat(shmd, 0, 0);
   user.userid = num_users;
   user.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
   user.balance = 10000;
@@ -192,7 +192,6 @@ int makeUser() {
   close(fd);
   fd = open("users.txt", O_RDWR | O_TRUNC);
   write(fd, update, strlen(update));
-  me.balance = 5000;
 
   //close semaphores and shared memory
 

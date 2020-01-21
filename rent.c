@@ -23,6 +23,15 @@ int rent() {
     char end_date1[SEG_SIZE];
     char car[SEG_SIZE];
     printf("\x1b[H\x1b[J");
+    if (me.start_rent_day != 0){
+      printf("You are currently renting out a car!\n");
+      shmdt(cars);
+
+      sb1.sem_op = 1;
+      semop(semd, &sb1, 1);
+      printf("\n");
+      return 1;
+    }
     printf("Hi! During which days are you interested in borrowing a car?\n");
     printf("We ask that you enter dates in the format of MM-DD\nStarting date:");
     fgets(start_date1, SEG_SIZE, stdin);
