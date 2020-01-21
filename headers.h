@@ -52,8 +52,7 @@ struct users {
 extern struct users me,user;
 extern bool running;
 extern int semd, shmd, shmd2, fd; // desecriptors
-extern union semun us;
-extern struct sembuf sb;
+extern struct sembuf sb1,sb2;
 /*struct month {
   int numDays;
   struct day days[numDays];

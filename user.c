@@ -11,17 +11,17 @@ int display(char * choice) {
   if(strcmp(choice, "exit") == 0) {
     running = false;
   }
-  if(strcmp(choice, "log in") == 0) {
+  else if(strcmp(choice, "log in") == 0) {
     printf("\x1b[H\x1b[J");
-    printf("Username: ");
     if(verifyUser()) {
       displayMenu();
+    } else{
+      printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
     }
   }
 
-  if(strcmp(choice, "create new account") == 0 || strcmp(choice, "Create new account") == 0  ) {
+  else if(strcmp(choice, "create new account") == 0 || strcmp(choice, "Create new account") == 0  ) {
     printf("\x1b[H\x1b[J");
-    printf("Username: ");
     if(makeUser()) {
       displayMenu();
     }
@@ -30,20 +30,20 @@ int display(char * choice) {
     }
   }
 
-  if(strcmp(choice, "view my account") == 0) {
+  else if(strcmp(choice, "view my account") == 0) {
     printf("\x1b[H\x1b[J");
     viewAccount();
   }
 
-  if(strcmp(choice, "back") == 0) {
+  else if(strcmp(choice, "back") == 0) {
     displayMenu();
   }
 
-  if(strcmp(choice, "log out") == 0) {
+  else if(strcmp(choice, "log out") == 0) {
     printf("\x1b[H\x1b[J");
     logout();
   }
-  if(strcmp(choice, "view available cars") == 0) {
+  else if(strcmp(choice, "view available cars") == 0) {
     int status;
     if(fork() == 0) {
       char* args[] = {"./control", "-va", NULL};
@@ -57,7 +57,7 @@ int display(char * choice) {
       wait(&status);
     }
   }
-  if(strcmp(choice, "rent") == 0) {
+  else if(strcmp(choice, "rent") == 0) {
     rent();
     // int status;
     // if(fork() == 0) {
@@ -72,7 +72,7 @@ int display(char * choice) {
     //   wait(&status);
     // }
   }
-  if(strcmp(choice, "return a car") == 0) {
+  else if(strcmp(choice, "return a car") == 0) {
     return_car();
     // int status;
     // if(fork() == 0) {
@@ -113,6 +113,7 @@ int makeUser() {
   int fd = open("users.txt", O_RDWR);
   read(fd, str_num_user, 1);
   int num_users = atoi(str_num_user);
+  printf("Username: ");
   //printf("%d\n",num_users);
   fgets(input, 50, stdin);
   printf("\x1b[H\x1b[J");
@@ -137,16 +138,15 @@ int makeUser() {
   }
   num_users += 1;
 
-  sb.sem_num=0;
-  sb.sem_op = -1;
-  sb.sem_flg = SEM_UNDO;
+  sb2.sem_num=0;
+  sb2.sem_op = -1;
   // after username and passwords are confirmed, store username's other info in shared memory
   semd = semget(SEM2KEY, 1, 0);
   if (semd < 0) {
       printf("semaphore error: %s", strerror(errno));
       return 1;
   }
-  semop(semd, &sb, 1);
+  semop(semd, &sb2, 1);
   shmd = shmget(MEM2KEY, sizeof(struct users) * 100, 0);
   if (shmd < 0) {
       printf("memory error: %s", strerror(errno));
@@ -193,8 +193,8 @@ int makeUser() {
 
   shmdt(users);
 
-  sb.sem_op = 1;
-  semop(semd, &sb, 1);
+  sb2.sem_op = 1;
+  semop(semd, &sb2, 1);
 
   close(fd);
   return 1;
@@ -204,8 +204,8 @@ int verifyUser() {
   char ** userID;
   int fd = open("users.txt", O_RDONLY);
   if(fd < 0) {
-    printf("Error: %s", strerror(errno));
-    return 1;
+    printf("Error: %s\n", strerror(errno));
+    return 0;
   }
 
   char check[SEG_SIZE];
@@ -217,6 +217,7 @@ int verifyUser() {
   }
   userID = parse_args(check, "\n");
   char input[SEG_SIZE];
+  printf("Username: ");
   fgets(input, SEG_SIZE, stdin);
   char * checker;
   if ((checker = strchr(input, '\n')) != NULL) {
@@ -236,16 +237,15 @@ int verifyUser() {
         *checker = '\0';
       }
       if(strcmp(input2, args[1]) == 0) {
-        sb.sem_num=0;
-        sb.sem_op = -1;
-        sb.sem_flg = SEM_UNDO;
+        sb2.sem_num=0;
+        sb2.sem_op =-1;
         // after username and passwords are confirmed, store username's other info in shared memory
         semd = semget(SEM2KEY, 1, 0);
         if (semd < 0) {
             printf("semaphore error: %s", strerror(errno));
             return 1;
         }
-        semop(semd, &sb, 1);
+        semop(semd, &sb2, 1);
         shmd = shmget(MEM2KEY, sizeof(struct users) * 100, 0);
         if (shmd < 0) {
             printf("memory error: %s", strerror(errno));
@@ -260,8 +260,8 @@ int verifyUser() {
 
         shmdt(users);
 
-        sb.sem_op = 1;
-        semop(semd, &sb, 1);
+        sb2.sem_op = 1;
+        semop(semd, &sb2, 1);
         return 1;
       }
     }
@@ -274,30 +274,28 @@ int verifyUser() {
 }
 
 void logout() {
-  sb.sem_num=0;
-  sb.sem_op = -1;
-  sb.sem_flg = SEM_UNDO;
+  sb2.sem_num=0;
+  sb2.sem_op = -1;
   // after username and passwords are confirmed, store username's other info in shared memory
   semd = semget(SEM2KEY, 1, 0);
   if (semd < 0) {
       printf("semaphore error: %s", strerror(errno));
       return;
   }
-  semop(semd, &sb, 1);
+  semop(semd, &sb2, 1);
   shmd = shmget(MEM2KEY, sizeof(struct users) * 100, 0);
   if (shmd < 0) {
       printf("memory error: %s", strerror(errno));
       return;
   }
   struct users * users = (struct users*) shmat(shmd, 0, 0);
-  user = users[me.userid];
-  user.rented = me.rented;
-  user.balance = me.balance;
-
+  struct users * user = &users[me.userid];
+  memcpy(&(user->rented), &me.rented, sizeof(struct vehicle));
+  memcpy(&(user->balance), &me.balance, sizeof(me.balance));
   shmdt(users);
 
-  sb.sem_op = 1;
-  semop(semd, &sb, 1);
+  sb2.sem_op = 1;
+  semop(semd, &sb2, 1);
   memset(me.username, '\0', 20);
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
 }

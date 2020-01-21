@@ -1,16 +1,15 @@
 #include "headers.h"
 
 int rent() {
-    sb.sem_num=0;
-    sb.sem_op = -1;
-    sb.sem_flg = SEM_UNDO;
+    sb1.sem_num=0;
+    sb1.sem_op = -1;
 
     semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
         printf("semaphore error: %s", strerror(errno));
         return 1;
     }
-    semop(semd, &sb, 1);
+    semop(semd, &sb1, 1);
     shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10 , 0);
     if (shmd < 0) {
         printf("memory error: %s", strerror(errno));
@@ -58,12 +57,14 @@ int rent() {
     printf("The following cars are available during those days:\n");
 
     int unit =0;
+    bool no_cars = true;
     for (size_t i = 0; i < 10; i++) {
       struct calendar * availablility = &cars[i].calendar;
       int available = 0;
       for (size_t i = start_date; i < end_date + 1 && availablility->unit1[i] == 0; i++) {
         if(i == end_date){
           available = 1;
+          no_cars = false;
         }
       }
       if (available){
@@ -74,6 +75,7 @@ int rent() {
         for (size_t i = start_date; i < end_date + 1 && availablility->unit2[i] == 0; i++) {
           if(i == end_date){
             available = 1;
+            no_cars = false;
           }
         }
         if (available){
@@ -81,21 +83,22 @@ int rent() {
           printf("%s\n",cars[i].model);
         } else{
           available = 0;
-          for (size_t i = start_date; i < end_date + 1 && availablility->unit2[i] == 0; i++) {
+          for (size_t i = start_date; i < end_date + 1 && availablility->unit3[i] == 0; i++) {
             if(i == end_date){
               available = 1;
+              no_cars = false;
             }
           }
           if (available){
             unit = 3;
             printf("%s\n",cars[i].model);
-          } else{
-            //if no cars are available, go back to the menu screen
-            printf("Sorry, no cars are availble during those days.\n");
-            return 1;
           }
         }
       }
+    }
+    if(no_cars){
+      printf("Sorry, no cars are availble during those days.\n");
+      return 1;
     }
     //after showing what cars are available, let them choose
     struct vehicle * chosen_car = NULL;
@@ -156,8 +159,8 @@ int rent() {
 
     shmdt(cars);
 
-    sb.sem_op = 1;
-    semop(semd, &sb, 1);
+    sb1.sem_op = 1;
+    semop(semd, &sb1, 1);
     printf("\n");
     return 1;
 }

@@ -2,20 +2,20 @@
 
 struct users me,user;
 int semd, shmd, fd; // desecriptors
-union semun us;
-struct sembuf sb;
+union semun us1,us2;
+struct sembuf sb1,sb2;
 
 int setUpCars(){
   printf("creating cars...\n\n");
   // creating semaphore
-  semd = semget(SEMKEY, 1, IPC_CREAT | 0644);
+  semd = semget(SEMKEY, 1, IPC_CREAT | IPC_EXCL | 0644);
   if (semd < 0) {
     printf("ayo");
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }
   printf("semaphore created\n");
-  semctl(semd, 0, SETVAL, us);
+  semctl(semd, 0, SETVAL, us1);
 
   //creating shared memory
   shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10 , IPC_CREAT | 0644);
@@ -53,6 +53,7 @@ int setUpCars(){
   //creating file
 }
 int setUpUsers(){
+  printf("creating login system...\n\n");
   // creating semaphore
   semd = semget(SEM2KEY, 1, IPC_CREAT | 0644);
   if (semd < 0) {
@@ -61,7 +62,7 @@ int setUpUsers(){
     return -1;
   }
   printf("semaphore created\n");
-  semctl(semd, 0, SETVAL, us);
+  semctl(semd, 0, SETVAL, us2);
 
   //creating shared memory
   shmd = shmget(MEM2KEY, 100 * sizeof(struct users) , IPC_CREAT | 0644);
@@ -80,7 +81,7 @@ int viewAvailableCars(){
     printf("semaphore Error: %s\n", strerror(semd));
     return -1;
   }
-  semop(semd,&sb,1);
+  semop(semd,&sb1,1);
 
   shmd=shmget(MEMKEY,sizeof(struct vehicle) * 10,0);
   if(shmd < 0){
@@ -97,8 +98,8 @@ int viewAvailableCars(){
   printf("\nType 'back' to go back to the menu, or type rent if you'd like to rent out a car\n\n");
 
   shmdt(availableCars);
-  sb.sem_op=1;
-  semop(semd,&sb,1);
+  sb1.sem_op=1;
+  semop(semd,&sb1,1);
 }
 
 int removeCars(){
@@ -115,7 +116,25 @@ int removeCars(){
         printf("error %d: %s\n", errno, strerror(errno));
         return -1;
       }
-      semop(semd, &sb, 1);
+      semop(semd, &sb1, 1);
+      semctl(semd, IPC_RMID, 0);
+      printf("semaphore removed\n");
+}
+int removeUsers(){
+      // Print Contents
+      shmd = shmget(MEM2KEY, sizeof(struct users) * 100 , 0);
+      if (shmd< 0){
+        printf("sharedy memory error %d: %s\n", errno, strerror(errno));
+        return -1;
+      }
+      shmctl(shmd, IPC_RMID, 0);
+      printf("shared memory removed\n");
+      semd = semget(SEM2KEY, 1, 0);
+      if (semd< 0) {
+        printf("error %d: %s\n", errno, strerror(errno));
+        return -1;
+      }
+      semop(semd, &sb2, 1);
       semctl(semd, IPC_RMID, 0);
       printf("semaphore removed\n");
 }
@@ -126,6 +145,7 @@ int execute (char *args[]){
     debug = setUpCars();
     debug = setUpUsers();
   } else if(strcmp(args[1],"-r")==0){
+    debug = removeUsers();
     debug = removeCars();
   } else if(strcmp(args[1],"-va")==0){
     debug = viewAvailableCars();
@@ -137,14 +157,16 @@ int execute (char *args[]){
 }
 
 int main(int argc, char *argv[]) {
-  us.val=1;
-  sb.sem_num=0;
-  sb.sem_op =-1;
+  us1.val=1;
+  us2.val=1;
+  sb1.sem_num=0;
+  sb1.sem_op =-1;
+  sb2.sem_num=0;
+  sb2.sem_op =-1;
   if(argc <= 1) {
     printf("%s\n", "You may access this Cars by using the following flags...");
-    printf("%s\n", "\"-c\" to create Cars");
-    printf("%s\n", "\"-u\" to setup User Login System");
-    printf("%s\n", "\"-r\" to remove Cars");
+    printf("%s\n", "\"-c\" to create Cars and User Login System");
+    printf("%s\n", "\"-r\" to remove Cars and Users");
     printf("%s\n", "\"-va\" to read Cars's contents");
   } else {
     int executed = execute(argv);

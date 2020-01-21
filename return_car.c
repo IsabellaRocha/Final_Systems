@@ -1,16 +1,15 @@
 #include "headers.h"
 
 int return_car() {
-    sb.sem_num = 0;
-    sb.sem_flg = SEM_UNDO;
-    sb.sem_op = -1;
+    sb1.sem_num = 0;
+    sb1.sem_op = -1;
 
     semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
         printf("semaphore error: %s", strerror(errno));
         return 1;
     }
-    semop(semd, &sb, 1);
+    semop(semd, &sb1, 1);
     shmd = shmget(MEMKEY, sizeof(char*), 0);
     if (shmd < 0) {
         printf("memory error: %s", strerror(errno));
@@ -45,8 +44,8 @@ int return_car() {
 
     shmdt(cars);
 
-    sb.sem_op = 1;
-    semop(semd, &sb, 1);
+    sb1.sem_op = 1;
+    semop(semd, &sb1, 1);
     printf("\n");
     return 0;
 }
