@@ -135,6 +135,7 @@ int rent() {
     if (strlen(input) != 0) {
       input[strlen(input)-1] = '\0';
     }
+    printf("%d\n",unit);
     if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
       me.balance -= cost;
       if(unit == 1){
@@ -151,6 +152,7 @@ int rent() {
         }
       }
       memcpy(&me.rented, &chosen_car, sizeof(struct vehicle));
+      printf("Your purchase has been successful\n");
     } else{
       printf("Your purchase has been cancelled\n");
       return 1;
@@ -161,5 +163,5 @@ int rent() {
     sb.sem_op = 1;
     semop(semd, &sb, 1);
     printf("\n");
-    return 0;
+    return 1;
 }
