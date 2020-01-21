@@ -9,7 +9,7 @@ Our project is a management system for a hypothetical car rental service. Users 
 * When you are opening the program for the first time, please run make in order to compile all the files, and then run ./control -c in order to create the shared memory
 * After that, simply run make run and follow the prompts on the screen and enter responses in the requested format, separating dates by dash and making sure to type your inputs in all lower case except when typing in the car model: type that exactly as it appears on screen
 * If the instructions are not clear on what to do next after you've finished an operation, enter 'back' to return to the display menu
-
+* We recommend testing all the features within one run of the program. Logging in and Logging out preserves all features but exiting the program does not. We've explained more below on the bug that happens when the program closes.
 
 ### Features ###
 * Creating and logging into accounts using files
@@ -47,4 +47,4 @@ Our project is a management system for a hypothetical car rental service. Users 
   * Joseph: Fixed bugs
 
 ## Bugs ##
-* although shared memory is updated even when logging out, data is lost after the program finishes.
+* We have issue with shared memory after the program clases. Everything works even when logging out. The shared memory is updated. However, when exiting the program, which is a simple stopping the while loop, the updates made on the shared memory is somehow lost after the program is closed.
