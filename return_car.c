@@ -20,6 +20,7 @@ int return_car() {
     struct vehicle* cars = shmat(shmd, 0, 0);
 
     char input[SEG_SIZE];
+    printf("\x1b[H\x1b[J");
     printf("Hi! Can you confirm that you are here to return your car? (Y\\N): ");
     fgets(input, SEG_SIZE, stdin);
     if (strlen(input) != 0) {
