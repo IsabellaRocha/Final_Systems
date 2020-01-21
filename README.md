@@ -7,7 +7,8 @@ Our project is a management system for a hypothetical car rental service. Users 
 
 ### Instructions ###
 * When you are opening the program for the first time, please run make in order to compile all the files, and then run ./control -c in order to create the shared memory
-* After that, simply run make run and follow the prompts on the screen, making sure to type your inputs in all lower case except when typing in the car model: type that exactly as it appears on screen
+* After that, simply run make run and follow the prompts on the screen and enter responses in the requested format, separating dates by dash and making sure to type your inputs in all lower case except when typing in the car model: type that exactly as it appears on screen
+
 
 ### Features ###
 * Creating and logging into accounts using files
@@ -41,3 +42,5 @@ Our project is a management system for a hypothetical car rental service. Users 
 * 1/20
   * Isabella: Helped try to figure out shared memory and semaphores, debugged, added cost to users to limit how much they can spend
   * Joseph: Reorganized files, wrote the shared memory and semaphore code for return_car and rent, added using shared memory and semaphores in user when logging in and creating an account, debugged
+* 1/21
+  * Joseph: Fixed bugs
