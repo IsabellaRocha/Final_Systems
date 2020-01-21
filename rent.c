@@ -1,17 +1,19 @@
 #include "headers.h"
-int shmd, shmd2, semd;
+int shmd, semd;
 struct sembuf sb;
 struct users me;
 
 int main() {
-  sb.sem_num = 0;
-  //sb.sem_flg = SEM_UNDO;
-  sb.sem_op = -1;
   rent();
   return 0;
 }
 
+
 int rent() {
+    sb.sem_num=0;
+    sb.sem_op = -1;
+    sb.sem_flg = SEM_UNDO;
+
     semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
         printf("semaphore error: %s", strerror(errno));
@@ -27,8 +29,8 @@ int rent() {
     struct vehicle * cars = (struct vehicle*) shmat(shmd, 0, 0);
 
 
-    char *start_date1;
-    char *end_date1;
+    char start_date1[SEG_SIZE];
+    char end_date1[SEG_SIZE];
     char car[SEG_SIZE];
     printf("Hi! During which days are you interested in borrowing a car?\n");
     printf("We ask that you enter dates in the format of MM-DD\nStarting date:");
@@ -109,6 +111,9 @@ int rent() {
     while(chosen_car == NULL){
       printf("Please type in the model of the car you'd like to rent: ");
       fgets(car, SEG_SIZE, stdin);
+      if (strlen(car) != 0) {
+        car[strlen(car)-1] = '\0';
+      }
       int i = 0;
       for( i = 0; i < 10; i++){
         if (strcmp(cars[i].model, car) == 0){
