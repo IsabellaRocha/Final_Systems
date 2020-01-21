@@ -61,7 +61,6 @@ extern struct sembuf sb;
 }; */
 
 int makeUser();
-int makePassword();
 int display(char * choice);
 void displayMenu();
 int return_car();
@@ -71,9 +70,3 @@ int verifyUser();
 void viewAccount();
 char ** parse_args(char * line, char * delimiter);
 char * removeSpace(char * line);
-int createMem();
-/*int setUpCars();
-void viewAvailableCars();
-void viewRentedCars();
-int removeCars();
-int execute();*/
