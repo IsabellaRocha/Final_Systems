@@ -5,16 +5,16 @@ Team Members: Joseph Lee, Isabella Rocha
 
 Our project is a management system for a hypothetical car rental service. Users may rent and return cars. Users may request specific models and may specify on what days they will need it. Users may also cancel requests and return the cars earlier. However, if all cars available in that model are currently rented out, they will have to wait for a car to be returned if they want to rent it.
 
-Instructions:
+### Instructions ###
 * When you are opening the program for the first time, please run make in order to compile all the files, and then run ./control -c in order to create the shared memory
-* After that, simply run make run and follow the prompts on the screen, making sure to type your inputs in all lower case
+* After that, simply run make run and follow the prompts on the screen, making sure to type your inputs in all lower case except when typing in the car model: type that exactly as it appears on screen
 
-Features:
+### Features ###
 * Creating and logging into accounts using files
 * Renting and returning cars using shared memory and semaphores
 * Running subprocesses using exec and forking
 
-# Devlog #
+## Devlog ##
 * 1/5
   * Isabella: Created a headers file with a vehicle struct and a make file
 * 1/8
@@ -38,3 +38,6 @@ Features:
 * 1/19
   * Isabella: Added cars to our shared memory, got viewing available cars to work, edited how our shared memory works, updated the users struct, utilized forking and execvp to access shared memory commands in our rent and return files
   * Joseph: Changed car storing, shared memory, and semaphore structure to allow renting out by days and months. Continued working on the renting car prompts and returning car structure/format/prompts
+* 1/20
+  * Isabella: Helped try to figure out shared memory and semaphores, debugged, added cost to users to limit how much they can spend
+  * Joseph: Reorganized files, wrote the shared memory and semaphore code for return_car and rent, added using shared memory and semaphores in user when logging in and creating an account, debugged
