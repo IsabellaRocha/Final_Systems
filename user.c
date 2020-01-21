@@ -140,6 +140,7 @@ int makeUser() {
 
   sb2.sem_num=0;
   sb2.sem_op = -1;
+  sb2.sem_flg = SEM_UNDO;
   // after username and passwords are confirmed, store username's other info in shared memory
   semd = semget(SEM2KEY, 1, 0);
   if (semd < 0) {
@@ -239,6 +240,7 @@ int verifyUser() {
       if(strcmp(input2, args[1]) == 0) {
         sb2.sem_num=0;
         sb2.sem_op =-1;
+        sb2.sem_flg = SEM_UNDO;
         // after username and passwords are confirmed, store username's other info in shared memory
         semd = semget(SEM2KEY, 1, 0);
         if (semd < 0) {
@@ -252,11 +254,11 @@ int verifyUser() {
             return 1;
         }
         struct users * users = (struct users*) shmat(shmd, 0, 0);
-        user = users[idx];
-        strcpy(me.username, user.username);
-        me.userid = user.userid;
-        me.rented = user.rented;
-        me.balance = user.balance;
+        struct users * user = &users[idx];
+        strcpy(me.username, user->username);
+        me.userid = user->userid;
+        me.rented = user->rented;
+        me.balance = user->balance;
 
         shmdt(users);
 
@@ -276,6 +278,7 @@ int verifyUser() {
 void logout() {
   sb2.sem_num=0;
   sb2.sem_op = -1;
+  sb2.sem_flg = SEM_UNDO;
   // after username and passwords are confirmed, store username's other info in shared memory
   semd = semget(SEM2KEY, 1, 0);
   if (semd < 0) {

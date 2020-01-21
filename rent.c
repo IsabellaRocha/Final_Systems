@@ -3,7 +3,7 @@
 int rent() {
     sb1.sem_num=0;
     sb1.sem_op = -1;
-
+    sb1.sem_flg = SEM_UNDO;
     semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
         printf("semaphore error: %s", strerror(errno));
@@ -16,7 +16,7 @@ int rent() {
         return 1;
     }
 
-    struct vehicle * cars = (struct vehicle*) shmat(shmd, 0, 0);
+    struct vehicle * cars = shmat(shmd, 0, 0);
 
 
     char start_date1[SEG_SIZE];
