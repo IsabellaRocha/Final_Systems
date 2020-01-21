@@ -134,6 +134,11 @@ int rent() {
         if (strcmp(cars[i].model, car) == 0){
           chosen_car = &cars[i];
         } else if (strcmp(car, "back") == 0){
+          shmdt(cars);
+
+          sb1.sem_op = 1;
+          semop(semd, &sb1, 1);
+          printf("\n");
           //if user would like to cancel renting  car, go back to the menu screen
           return 1;
         }
@@ -158,7 +163,7 @@ int rent() {
     if (strlen(input) != 0) {
       input[strlen(input)-1] = '\0';
     }
-    printf("%d\n",unit);
+    //printf("%d\n",unit);
     if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
       if(me.balance - cost >= 0) {
         me.balance -= cost;
