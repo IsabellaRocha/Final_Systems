@@ -141,8 +141,6 @@ int execute (char *args[]){
     debug = removeCars();
   } else if(strcmp(args[1],"-va")==0){
     debug = viewAvailableCars();
-  } else if(strcmp(args[1],"-vr")==0){
-    debug = viewRentedCars();
   } else{
       printf("command not found\n");
       debug = -1;
