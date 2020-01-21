@@ -22,6 +22,7 @@ int rent() {
     char start_date1[SEG_SIZE];
     char end_date1[SEG_SIZE];
     char car[SEG_SIZE];
+    printf("\x1b[H\x1b[J");
     printf("Hi! During which days are you interested in borrowing a car?\n");
     printf("We ask that you enter dates in the format of MM-DD\nStarting date:");
     fgets(start_date1, SEG_SIZE, stdin);
@@ -38,7 +39,7 @@ int rent() {
 
     if(start_month == 2){
       start_month = start_month * 29;
-    } else if(start_month%2 == 1){
+    } else if(start_month%2 == 0){
       start_month = start_month * 30;
     } else{
       start_month = start_month * 31;
@@ -54,6 +55,7 @@ int rent() {
 
     int start_date = start_month + start_day;
     int end_date = end_month + end_day;
+    printf("\x1b[H\x1b[J");
     printf("The following cars are available during those days:\n");
 
     int unit =0;
@@ -119,6 +121,7 @@ int rent() {
       }
       if(chosen_car == NULL){
         printf("Error: You've entered a model that does not exist in our database.\n");
+        return 1;
       }
     }
 
@@ -148,6 +151,10 @@ int rent() {
           }
         }
         memcpy(&me.rented, chosen_car, sizeof(struct vehicle));
+        me.start_rent_day = start_day;
+        me.start_rent_month = start_month;
+        me.end_rent_month = end_month;
+        me.end_rent_day = end_day;
         printf("Your purchase has been successful\n");
       }
       else {

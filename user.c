@@ -157,13 +157,17 @@ int makeUser() {
   struct users * users = (struct users*) shmat(shmd, 0, 0);
   user.userid = num_users;
   user.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
-  user.balance = 5000;
+  user.balance = 10000;
   strcpy(user.username,input);
   users[num_users-1] = user;
 
   me.userid = num_users;
   me.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
   me.balance = 5000;
+  me.start_rent_month = 0;
+  me.start_rent_day = 0;
+  me.end_rent_month = 0;
+  me.end_rent_day = 0;
   strcpy(me.username,input);
 
   //printf("%s\n",buffer);
@@ -309,5 +313,26 @@ void viewAccount() {
   printf("Username: %s\n", me.username);
   printf("Current car: %s\n", me.rented.model);
   printf("Current balance: $%d\n", me.balance);
-  printf("Type 'back' to go back to the menu\n\n");
+  int start_month = 0;
+  int start_day = 0;
+  int end_month = 0;
+  int end_day = 0;
+
+  if(start_month%29 == 0){
+    start_month = 2;
+  } else if(start_month%30 == 0){
+    start_month = start_month/30;
+  } else{
+    start_month = start_month/31;
+  }
+
+  if(end_month%29 == 0){
+    end_month = 2;
+  } else if(end_month%30 == 0){
+    end_month = end_month/30;
+  } else{
+    end_month = end_month/31;
+  }
+  printf("Current Rental Date: %d/%d - %d/%d\n",me.start_rent_month,me.start_rent_day,me.end_rent_month,me.start_rent_day);
+  printf("\nType 'back' to go back to the menu or \'rent\' to rent a car\n\n");
 }

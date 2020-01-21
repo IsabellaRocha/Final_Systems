@@ -95,7 +95,7 @@ int viewAvailableCars(){
   for(size_t i = 0; i < 10 && strcmp(availableCars[i].model, " ") != 0; i++) {
     printf("- %s, %s, %d seats, rental cost per day: $%d\n", availableCars[i].model, availableCars[i].color, availableCars[i].seatNumber, availableCars[i].cost);
   }
-  printf("\nType 'back' to go back to the menu, or type rent if you'd like to rent out a car\n\n");
+  printf("\nType 'back' to go back to the menu, or type rent if you'd like to \'rent\' out a car\n\n");
 
   shmdt(availableCars);
   sb1.sem_op=1;
