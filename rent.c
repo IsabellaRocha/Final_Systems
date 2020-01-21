@@ -18,7 +18,7 @@ int rent() {
         return 1;
     }
     semop(semd, &sb, 1);
-    shmd = shmget(MEMKEY, sizeof(char*), 0);
+    shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10 , 0);
     if (shmd < 0) {
         printf("memory error: %s", strerror(errno));
         return 1;
