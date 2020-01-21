@@ -132,6 +132,9 @@ int rent() {
     int cost = chosen_car->cost * (end_date - start_date);
     printf("The final price for the rental is: %d\nWould you like to continue with your purchase? (Y\\N)\n", cost);
     fgets(input, SEG_SIZE, stdin);
+    if (strlen(input) != 0) {
+      input[strlen(input)-1] = '\0';
+    }
     if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
       me.balance -= cost;
       if(unit == 1){
