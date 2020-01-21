@@ -98,17 +98,6 @@ int viewAvailableCars(){
   semop(semd,&sb,1);
 }
 
-int viewRentedCars() {
-  struct vehicle* rentedCars = shmat(shmd2, 0, 0);
-  int idx = 0;
-  printf("\x1b[H\x1b[J");
-  printf("Rented Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n");
-  for(idx; strcmp(rentedCars[idx].model, " ") != 0; idx++) {
-    printf("- %s, %s, %d, $%d\n", rentedCars[idx].model, rentedCars[idx].color, rentedCars[idx].seatNumber, rentedCars[idx].cost);
-  }
-  printf("\nType 'back' to go back to the menu\n\n");
-}
-
 int removeCars(){
       // Print Contents
       shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10, 0);

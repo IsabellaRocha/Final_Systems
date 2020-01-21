@@ -26,7 +26,7 @@ int main() {
 
 void displayMenu() {
   printf("\x1b[H\x1b[J");
-  printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View rented cars\n- View my account\n- Return a car\n- Log out\n\n");
+  printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View my account\n- Return a car\n- Log out\n\n");
 }
 
 int display(char * choice) {
@@ -71,20 +71,6 @@ int display(char * choice) {
     int status;
     if(fork() == 0) {
       char* args[] = {"./control", "-va", NULL};
-      int execute = execvp("./control", args);
-      if(execute < 0) {
-        printf("Error: %s", strerror(errno));
-        return 1;
-      }
-    }
-    else {
-      wait(&status);
-    }
-  }
-  if(strcmp(choice, "view rented cars") == 0) {
-    int status;
-    if(fork() == 0) {
-      char* args[] = {"./control", "-vr", NULL};
       int execute = execvp("./control", args);
       if(execute < 0) {
         printf("Error: %s", strerror(errno));
