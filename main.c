@@ -447,25 +447,29 @@ int rent() {
     }
     printf("%d\n",unit);
     if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
-      me.balance -= cost;
-      if(unit == 1){
-        for (size_t i = start_date; i < end_date; i++) {
-          chosen_car->calendar.unit1[i] = me.userid;
+      if(me.balance - cost >= 0) {
+        me.balance -= cost;
+        if(unit == 1){
+          for (size_t i = start_date; i < end_date; i++) {
+            chosen_car->calendar.unit1[i] = me.userid;
+          }
+        } else if(unit == 2){
+          for (size_t i = start_date; i < end_date; i++) {
+            chosen_car->calendar.unit2[i] = me.userid;
+          }
+        } else if(unit == 3){
+          for (size_t i = start_date; i < end_date; i++) {
+            chosen_car->calendar.unit3[i] = me.userid;
+          }
         }
-      } else if(unit == 2){
-        for (size_t i = start_date; i < end_date; i++) {
-          chosen_car->calendar.unit2[i] = me.userid;
-        }
-      } else if(unit == 3){
-        for (size_t i = start_date; i < end_date; i++) {
-          chosen_car->calendar.unit3[i] = me.userid;
-        }
+        memcpy(&me.rented, chosen_car, sizeof(struct vehicle));
+        printf("Your purchase has been successful\n");
       }
-      memcpy(&me.rented, chosen_car, sizeof(struct vehicle));
-      printf("Your purchase has been successful\n");
+      else {
+        printf("Insufficience funds, please type \"back\" to return to menu");
+      }
     } else{
       printf("Your purchase has been cancelled, please type back\n\n");
-      return 1;
     }
 
     shmdt(cars);
