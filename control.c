@@ -1,5 +1,7 @@
 #include "headers.h"
-int semd, shmd, shmd2, fd; // desecriptors
+
+struct users me,user;
+int semd, shmd, fd; // desecriptors
 union semun us;
 struct sembuf sb;
 

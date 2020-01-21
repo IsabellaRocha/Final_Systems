@@ -1,13 +1,4 @@
 #include "headers.h"
-int shmd, semd;
-struct sembuf sb;
-struct users me;
-
-int main() {
-  rent();
-  return 0;
-}
-
 
 int rent() {
     sb.sem_num=0;
@@ -135,8 +126,10 @@ int rent() {
     if (strlen(input) != 0) {
       input[strlen(input)-1] = '\0';
     }
+    printf("%s\n",input);
     printf("%d\n",unit);
     if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
+      printf("%d\n",cost);
       me.balance -= cost;
       if(unit == 1){
         for (size_t i = start_date; i < end_date; i++) {
@@ -152,7 +145,7 @@ int rent() {
         }
       }
       memcpy(&me.rented, &chosen_car, sizeof(struct vehicle));
-      printf("Your purchase has been successful\n");
+      printf("Your purchase has been successful!\n");
     } else{
       printf("Your purchase has been cancelled\n");
       return 1;

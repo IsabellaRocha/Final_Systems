@@ -1,28 +1,4 @@
 #include "headers.h"
-struct users me,user;
-bool running = true;
-int semd, shmd, shmd2, fd; // desecriptors
-union semun us;
-struct sembuf sb;
-
-int main() {
-  printf("\x1b[H\x1b[J"); //Clears screen
-  char line[50];
-
-  printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
-
-  while(running) {
-    printf("Type choice here: ");
-    fgets(line, 50, stdin);
-    char * checker;
-    if ((checker = strchr(line, '\n')) != NULL) {
-      *checker = '\0';
-    }
-    display(line);
-  }
-  return 0;
-}
-
 
 void displayMenu() {
   printf("\x1b[H\x1b[J");
@@ -82,32 +58,34 @@ int display(char * choice) {
     }
   }
   if(strcmp(choice, "rent") == 0) {
-    int status;
-    if(fork() == 0) {
-      char* args[] = {"./rent", NULL};
-      int execute = execvp("./rent", args);
-      if(execute < 0) {
-        printf("Error: %s", strerror(errno));
-        return 1;
-      }
-    }
-    else {
-      wait(&status);
-    }
+    rent();
+    // int status;
+    // if(fork() == 0) {
+    //   char* args[] = {"./rent", NULL};
+    //   int execute = execvp("./rent", args);
+    //   if(execute < 0) {
+    //     printf("Error: %s", strerror(errno));
+    //     return 1;
+    //   }
+    // }
+    // else {
+    //   wait(&status);
+    // }
   }
   if(strcmp(choice, "return a car") == 0) {
-    int status;
-    if(fork() == 0) {
-      char* args[] = {"./ret", NULL};
-      int execute = execvp("./ret", args);
-      if(execute < 0) {
-        printf("Error: %s", strerror(errno));
-        return 1;
-      }
-    }
-    else {
-      wait(&status);
-    }
+    return_car();
+    // int status;
+    // if(fork() == 0) {
+    //   char* args[] = {"./ret", NULL};
+    //   int execute = execvp("./ret", args);
+    //   if(execute < 0) {
+    //     printf("Error: %s", strerror(errno));
+    //     return 1;
+    //   }
+    // }
+    // else {
+    //   wait(&status);
+    // }
   }
   return 0;
 }

@@ -1,18 +1,10 @@
 #include "headers.h"
-int shmd, shmd2, semd;
-struct sembuf sb;
-int my_write();
-struct users me;
-
-int main() {
-  sb.sem_num = 0;
-  //sb.sem_flg = SEM_UNDO;
-  sb.sem_op = -1;
-  return_car();
-  return 0;
-}
 
 int return_car() {
+    sb.sem_num = 0;
+    sb.sem_flg = SEM_UNDO;
+    sb.sem_op = -1;
+
     semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
         printf("semaphore error: %s", strerror(errno));
