@@ -32,14 +32,28 @@ int rent() {
     char ** str_start_date = parse_args(start_date1,"-");
     char ** str_end_date = parse_args(end_date1,"-");
 
-    int start_month = atoi(str_start_date[0]);
-    int start_day = atoi(str_start_date[1]);
-    int end_month = atoi(str_end_date[0]);
-    int end_day = atoi(str_end_date[1]);
+    int start_month = 0;
+    int start_day = 0;
+    int end_month = 0;
+    int end_day = 0;
+    // if(sizeof(str_start_date)/sizeof(str_start_date[0])> 1){
+    start_month = atoi(str_start_date[0]);
+    start_day = atoi(str_start_date[1]);
+    end_month = atoi(str_end_date[0]);
+    end_day = atoi(str_end_date[1]);
+    // } else{
+    //   printf("Please enter the information in the correct format\n");
+    //   shmdt(cars);
+    //
+    //   sb1.sem_op = 1;
+    //   semop(semd, &sb1, 1);
+    //   printf("\n");
+    //   return 1;
+    // }
 
     if(start_month == 2){
       start_month = start_month * 29;
-    } else if(start_month%2 == 0){
+    } else if(start_month%2 == 1){
       start_month = start_month * 30;
     } else{
       start_month = start_month * 31;
@@ -100,6 +114,11 @@ int rent() {
     }
     if(no_cars){
       printf("Sorry, no cars are availble during those days.\n");
+      shmdt(cars);
+
+      sb1.sem_op = 1;
+      semop(semd, &sb1, 1);
+      printf("\n");
       return 1;
     }
     //after showing what cars are available, let them choose
@@ -121,12 +140,18 @@ int rent() {
       }
       if(chosen_car == NULL){
         printf("Error: You've entered a model that does not exist in our database.\n");
+        shmdt(cars);
+
+        sb1.sem_op = 1;
+        semop(semd, &sb1, 1);
+        printf("\n");
         return 1;
       }
     }
 
 
     char input[SEG_SIZE];
+    //printf("%d - %d\n", end_date,start_date);
     int cost = chosen_car->cost * (end_date - start_date);
     printf("The final price for the rental is: %d\nWould you like to continue with your purchase? (Y\\N)\n", cost);
     fgets(input, SEG_SIZE, stdin);

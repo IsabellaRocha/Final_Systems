@@ -37,7 +37,7 @@ int setUpCars(){
   struct vehicle car6 = {"Volkswagen", "Red", 2, 500, calendars[5]};
   struct vehicle car7 = {"Subaru", "Gray", 8, 1200, calendars[6]};
   struct vehicle car8 = {"Tesla", "Black", 5, 1000, calendars[7]};
-  struct vehicle car9 = {"Toyota", "Blue", 5, 500, calendars[8]};
+  struct vehicle car9 = {"Honda", "Silver", 5, 400, calendars[8]};
   struct vehicle car10 = {"Lexus", "Blue", 8, 1500, calendars[9]};
 
   struct vehicle *cars = (struct vehicle*) shmat(shmd, 0, 0);
@@ -137,6 +137,8 @@ int removeUsers(){
       semop(semd, &sb2, 1);
       semctl(semd, IPC_RMID, 0);
       printf("semaphore removed\n");
+      remove("users.txt");
+      printf("file removed\n");
 }
 
 int execute (char *args[]){

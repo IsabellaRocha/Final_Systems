@@ -51,6 +51,9 @@ int return_car() {
         printf("You still have %d days left until your rental expires. Would you like to still return the car?\n(Y\\N): ",(me.end_rent_month+me.end_rent_day - today_month - today_day));
       }
       fgets(input, SEG_SIZE, stdin);
+      if (strlen(input) != 0) {
+        input[strlen(input)-1] = '\0';
+      }
       if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
 
         struct vehicle * car = &me.rented;

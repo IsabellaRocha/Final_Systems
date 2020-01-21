@@ -313,12 +313,12 @@ void viewAccount() {
   printf("Username: %s\n", me.username);
   printf("Current car: %s\n", me.rented.model);
   printf("Current balance: $%d\n", me.balance);
-  int start_month = 0;
-  int start_day = 0;
-  int end_month = 0;
-  int end_day = 0;
+  int start_month = me.start_rent_month;
+  int start_day = me.start_rent_day;
+  int end_month = me.end_rent_month;
+  int end_day = me.end_rent_day;
 
-  if(start_month%29 == 0){
+  if(start_month%29 == 0 && start_month != 0){
     start_month = 2;
   } else if(start_month%30 == 0){
     start_month = start_month/30;
@@ -326,13 +326,13 @@ void viewAccount() {
     start_month = start_month/31;
   }
 
-  if(end_month%29 == 0){
+  if(end_month%29 == 0 && start_month != 0){
     end_month = 2;
   } else if(end_month%30 == 0){
     end_month = end_month/30;
   } else{
     end_month = end_month/31;
   }
-  printf("Current Rental Date: %d/%d - %d/%d\n",me.start_rent_month,me.start_rent_day,me.end_rent_month,me.start_rent_day);
+  printf("Current Rental Date: %d/%d - %d/%d\n", start_month , start_day, end_month, end_day);
   printf("\nType 'back' to go back to the menu or \'rent\' to rent a car\n\n");
 }
