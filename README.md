@@ -45,3 +45,6 @@ Our project is a management system for a hypothetical car rental service. Users 
   * Joseph: Reorganized files, wrote the shared memory and semaphore code for return_car and rent, added using shared memory and semaphores in user when logging in and creating an account, debugged
 * 1/21
   * Joseph: Fixed bugs
+
+## Bugs ##
+* although shared memory is updated even when logging out, data is lost after the program finishes.
