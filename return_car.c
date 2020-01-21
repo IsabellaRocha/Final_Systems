@@ -38,7 +38,12 @@ int return_car() {
     int today_day = tm.tm_mday;
     bool pay = false;
     if (me.start_rent_day == 0){
-      printf("You have currently rented out zero cars!");
+      printf("You have currently rented out zero cars!\n");
+      shmdt(cars);
+      sb1.sem_op = 1;
+      semop(semd, &sb1, 1);
+      printf("\n");
+      return 0;
     }
     else if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
 
@@ -85,14 +90,23 @@ int return_car() {
         me.end_rent_month = 0;
         me.end_rent_day = 0;
       } else{
+        shmdt(cars);
+
+        sb1.sem_op = 1;
+        semop(semd, &sb1, 1);
+        printf("\n");
         return 1;
       }
     } else {
+      shmdt(cars);
+
+      sb1.sem_op = 1;
+      semop(semd, &sb1, 1);
+      printf("\n");
       return 1;
     }
-
+    printf("Thank you for using our service!\n");
     shmdt(cars);
-
     sb1.sem_op = 1;
     semop(semd, &sb1, 1);
     printf("\n");
