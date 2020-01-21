@@ -334,5 +334,5 @@ void viewAccount() {
     end_month = end_month/31;
   }
   printf("Current Rental Date: %d/%d - %d/%d\n", start_month , start_day, end_month, end_day);
-  printf("\nType 'back' to go back to the menu or \'rent\' to rent a car\n\n");
+  printf("\nType 'back' to go back to the menu\n\n");
 }
