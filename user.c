@@ -2,7 +2,7 @@
 
 void displayMenu() {
   printf("\x1b[H\x1b[J");
-  printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to rent a car)\n- View my account\n- Return a car\n- Log out\n\n");
+  printf("Please type in your choice from the options listed below: \n\n- View available cars (Select this if you also wish to \'rent\' a car)\n- View my account\n- Return a car\n- Log out\n\n");
 }
 
 int display(char * choice) {
@@ -253,12 +253,13 @@ int verifyUser() {
             printf("memory error: %s", strerror(errno));
             return 1;
         }
-        struct users * users = (struct users*) shmat(shmd, 0, 0);
-        struct users * user = &users[idx];
-        strcpy(me.username, user->username);
-        me.userid = user->userid;
-        me.rented = user->rented;
-        me.balance = user->balance;
+        struct users * users = shmat(shmd, 0, 0);
+        // struct users * user = &users[idx];
+        memcpy(&me,&users[idx],sizeof(struct user*));
+        // strcpy(me.username, user->username);
+        // me.userid = user->userid;
+        // me.rented = user->rented;
+        // me.balance = user->balance;
 
         shmdt(users);
 
@@ -271,7 +272,6 @@ int verifyUser() {
   }
   printf("\x1b[H\x1b[J");
   printf("Invalid account\n\n");
-  printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
   return 0;
 }
 
@@ -291,15 +291,17 @@ void logout() {
       printf("memory error: %s", strerror(errno));
       return;
   }
-  struct users * users = (struct users*) shmat(shmd, 0, 0);
-  struct users * user = &users[me.userid];
-  memcpy(&(user->rented), &me.rented, sizeof(struct vehicle));
-  memcpy(&(user->balance), &me.balance, sizeof(me.balance));
+  struct users * users = shmat(shmd, 0, 0);
+  // struct users * user = &users[me.userid];
+  memcpy(&users[me.userid],&me,sizeof(struct user*));
+  // memcpy(&(user->rented), &me.rented, sizeof(struct vehicle));
+  // memcpy(&(user->balance), &me.balance, sizeof(me.balance));
+
   shmdt(users);
 
   sb2.sem_op = 1;
   semop(semd, &sb2, 1);
-  memset(me.username, '\0', 20);
+  //memset(me.username, '\0', 20);
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
 }
 

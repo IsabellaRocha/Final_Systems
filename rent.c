@@ -154,7 +154,7 @@ int rent() {
         printf("Insufficience funds, please type \"back\" to return to menu");
       }
     } else{
-      printf("Your purchase has been cancelled, please type back\n\n");
+      printf("Your purchase has been cancelled, please type \'back\'\n\n");
     }
 
     shmdt(cars);

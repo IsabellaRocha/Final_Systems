@@ -13,7 +13,6 @@ int main() {
   while(running) {
     printf("Type choice here: ");
     fgets(line, 50, stdin);
-    printf("SDFKJNSD%s\n",line);
     if (strlen(line) != 0) {
       line[strlen(line)-1] = '\0';
     }

@@ -47,6 +47,8 @@ struct users {
   char username[50];
   struct vehicle rented;
   int balance;
+  int start_rent;
+  int end_rent;
 };
 
 extern struct users me,user;
