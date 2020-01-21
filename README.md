@@ -10,6 +10,7 @@ Our project is a management system for a hypothetical car rental service. Users 
 * After that, simply run make run and follow the prompts on the screen and enter responses in the requested format, separating dates by dash and making sure to type your inputs in all lower case except when typing in the car model: type that exactly as it appears on screen
 * If the instructions are not clear on what to do next after you've finished an operation, enter 'back' to return to the display menu
 * We recommend testing all the features within one run of the program. Logging in and Logging out preserves all features but exiting the program does not. We've explained more below on the bug that happens when the program closes.
+* If you format incorrectly and run into an error, you must remove the shared memory and semaphores using ./control -r, then restart the program
 
 ### Features ###
 * Creating and logging into accounts using files
