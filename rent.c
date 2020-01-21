@@ -139,7 +139,7 @@ int rent() {
         }
       }
       if(chosen_car == NULL){
-        printf("Error: You've entered a model that does not exist in our database.\n");
+        printf("Error: You've entered a model that does not exist in our database. Please type \"back\" to go back to the main menu\n");
         shmdt(cars);
 
         sb1.sem_op = 1;
@@ -180,13 +180,13 @@ int rent() {
         me.start_rent_month = start_month;
         me.end_rent_month = end_month;
         me.end_rent_day = end_day;
-        printf("Your purchase has been successful\n");
+        printf("\nYour purchase has been successful, please type \"back\" to return to menu\n");
       }
       else {
         printf("Insufficience funds, please type \"back\" to return to menu");
       }
     } else{
-      printf("Your purchase has been cancelled, please type \'back\'\n\n");
+      printf("Your purchase has been cancelled, please type \"back\"\n\n");
     }
 
     shmdt(cars);
