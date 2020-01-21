@@ -99,17 +99,6 @@ int viewAvailableCars(){
   semop(semd,&sb,1);
 }
 
-int viewRentedCars() {
-  struct vehicle* rentedCars = shmat(shmd2, 0, 0);
-  int idx = 0;
-  printf("\x1b[H\x1b[J");
-  printf("Rented Cars (Info for each car is listed as model, color, number of seats, and cost):\n\n");
-  for(idx; strcmp(rentedCars[idx].model, " ") != 0; idx++) {
-    printf("- %s, %s, %d, $%d\n", rentedCars[idx].model, rentedCars[idx].color, rentedCars[idx].seatNumber, rentedCars[idx].cost);
-  }
-  printf("\nType 'back' to go back to the menu\n\n");
-}
-
 int removeCars(){
       // Print Contents
       shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10 , 0);
@@ -133,14 +122,11 @@ int execute (char *args[]){
   int debug = 0;
   if(strcmp(args[1],"-c")==0){
     debug = setUpCars();
-  } else if(strcmp(args[1],"-u")==0){
     debug = setUpUsers();
   } else if(strcmp(args[1],"-r")==0){
     debug = removeCars();
   } else if(strcmp(args[1],"-va")==0){
     debug = viewAvailableCars();
-  } else if(strcmp(args[1],"-vr")==0){
-    debug = viewRentedCars();
   } else{
       printf("command not found\n");
       debug = -1;
