@@ -297,7 +297,7 @@ void logout() {
   }
   struct users * users = shmat(shmd, 0, 0);
   // struct users * user = &users[me.userid];
-  memcpy(&users[me.userid],&me,sizeof(struct user*));
+  memcpy(&users[me.userid],&me,sizeof(struct users));
   // memcpy(&(user->rented), &me.rented, sizeof(struct vehicle));
   // memcpy(&(user->balance), &me.balance, sizeof(me.balance));
 

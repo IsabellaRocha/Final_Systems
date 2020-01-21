@@ -48,12 +48,12 @@ int return_car() {
     else if(strcmp(input,"Y") == 0 || strcmp(input,"y") == 0){
 
       if(me.end_rent_month+me.end_rent_day == today_month + today_day){
-        printf("Your car rental expires today! Would you like to confirm the return?\n(Y\\N): ");
+        printf("Your car rental expires today! Would you like to confirm the return? (Y\\N): ");
       } else if(me.end_rent_month+me.end_rent_day < today_month + today_day){
         pay = true;
-        printf("Your car is %d days late. Your fee is: %d. Would you like to confirm your payment?\n(Y\\N): ",(today_month + today_day - me.end_rent_month - me.end_rent_day),(today_month + today_day - me.end_rent_month - me.end_rent_day)*30);
+        printf("Your car is %d days late. Your fee is: %d. Would you like to confirm your payment? (Y\\N): ",(today_month + today_day - me.end_rent_month - me.end_rent_day),(today_month + today_day - me.end_rent_month - me.end_rent_day)*30);
       } else{
-        printf("You still have %d days left until your rental expires. Would you like to still return the car?\n(Y\\N): ",(me.end_rent_month+me.end_rent_day - today_month - today_day));
+        printf("You still have %d days left until your rental expires. Would you like to still return the car? (Y\\N): ",(me.end_rent_month+me.end_rent_day - today_month - today_day));
       }
       fgets(input, SEG_SIZE, stdin);
       if (strlen(input) != 0) {
