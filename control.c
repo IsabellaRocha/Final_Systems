@@ -1,5 +1,5 @@
 #include "headers.h"
-int semd, shmd, shmd2, fd; // desecriptors
+int semd, semd2, shmd, shmd2, fd; // desecriptors
 union semun us;
 struct sembuf sb;
 
@@ -8,7 +8,6 @@ int setUpCars(){
   // creating semaphore
   semd = semget(SEMKEY, 1, IPC_CREAT | 0644);
   if (semd < 0) {
-    printf("ayo");
     printf("error %d: %s\n", errno, strerror(errno));
     return -1;
   }
@@ -112,12 +111,18 @@ int viewRentedCars() {
 
 int removeCars(){
       // Print Contents
-      shmd = shmget(MEMKEY, sizeof(int), 0);
+      shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10, 0);
       if (shmd< 0){
-        printf("sharedy memory error %d: %s\n", errno, strerror(errno));
+        printf("shared memory error %d: %s\n", errno, strerror(errno));
         return -1;
       }
       shmctl(shmd, IPC_RMID, 0);
+      shmd2 = shmget(MEM2KEY,  100 * sizeof(struct users), 0);
+      if (shmd2< 0){
+        printf("shared memory error %d: %s\n", errno, strerror(errno));
+        return -1;
+      }
+      shmctl(shmd2, IPC_RMID, 0);
 
       semd = semget(SEMKEY, 1, 0);
       if (semd< 0) {
@@ -126,6 +131,13 @@ int removeCars(){
       }
       semop(semd, &sb, 1);
       semctl(semd, IPC_RMID, 0);
+      semd2 = semget(SEM2KEY, 1, 0);
+      if (semd2< 0) {
+        printf("error %d: %s\n", errno, strerror(errno));
+        return -1;
+      }
+      semop(semd2, &sb, 1);
+      semctl(semd2, IPC_RMID, 0);
       printf("semaphore removed\n");
 }
 
@@ -133,6 +145,7 @@ int execute (char *args[]){
   int debug = 0;
   if(strcmp(args[1],"-c")==0){
     debug = setUpCars();
+    debug = setUpUsers();
   } else if(strcmp(args[1],"-u")==0){
     debug = setUpUsers();
   } else if(strcmp(args[1],"-r")==0){
