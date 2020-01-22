@@ -3,7 +3,7 @@
 struct users me,user;
 int semd, shmd, fd; // desecriptors
 union semun us1,us2;
-struct sembuf sb1,sb2;
+struct sembuf sb[2];
 
 int setUpCars(){
   printf("creating cars...\n\n");
@@ -81,7 +81,7 @@ int viewAvailableCars(){
     printf("semaphore Error: %s\n", strerror(semd));
     return -1;
   }
-  semop(semd,&sb1,1);
+  semop(semd,&sb[0],1);
 
   shmd=shmget(MEMKEY,sizeof(struct vehicle) * 10,0);
   if(shmd < 0){
@@ -98,8 +98,8 @@ int viewAvailableCars(){
   printf("\nType 'back' to go back to the menu, or type rent if you'd like to \'rent\' out a car\n\n");
 
   shmdt(availableCars);
-  sb1.sem_op=1;
-  semop(semd,&sb1,1);
+  sb[0].sem_op=1;
+  semop(semd,&sb[0],1);
 }
 
 int removeCars(){
@@ -116,7 +116,7 @@ int removeCars(){
         printf("error %d: %s\n", errno, strerror(errno));
         return -1;
       }
-      semop(semd, &sb1, 1);
+      semop(semd, &sb[0], 1);
       semctl(semd, IPC_RMID, 0);
       printf("semaphore removed\n");
 }
@@ -134,7 +134,7 @@ int removeUsers(){
         printf("error %d: %s\n", errno, strerror(errno));
         return -1;
       }
-      semop(semd, &sb2, 1);
+      semop(semd, &sb[1], 1);
       semctl(semd, IPC_RMID, 0);
       printf("semaphore removed\n");
       remove("users.txt");
@@ -161,12 +161,12 @@ int execute (char *args[]){
 int main(int argc, char *argv[]) {
   us1.val=1;
   us2.val=1;
-  sb1.sem_num=0;
-  sb1.sem_op =-1;
-  //sb1.sem_flg = SEM_UNDO;
-  sb2.sem_num=0;
-  sb2.sem_op =-1;
-  //sb2.sem_flg = SEM_UNDO;
+  sb[0].sem_num=0;
+  sb[0].sem_op =-1;
+  sb[0].sem_flg = SEM_UNDO;
+  sb[1].sem_num=0;
+  sb[1].sem_op =-1;
+  sb[1].sem_flg = SEM_UNDO;
   if(argc <= 1) {
     printf("%s\n", "You may access this Cars by using the following flags...");
     printf("%s\n", "\"-c\" to create Cars and User Login System");

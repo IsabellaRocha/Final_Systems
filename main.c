@@ -1,9 +1,9 @@
 #include "headers.h"
 
-struct users me,user;
+struct users me;
 bool running;
 int semd, shmd, fd; // desecriptors
-struct sembuf sb1,sb2;
+struct sembuf sb[2];
 
 int main() {
   running = true;

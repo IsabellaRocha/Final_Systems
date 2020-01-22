@@ -1,34 +1,14 @@
 #include "headers.h"
 
 int rent() {
-    sb1.sem_num=0;
-    sb1.sem_op = -1;
-    //sb1.sem_flg = SEM_UNDO;
-    semd = semget(SEMKEY, 1, 0);
-    if (semd < 0) {
-        printf("semaphore error: %s", strerror(errno));
-        return 1;
-    }
-    semop(semd, &sb1, 1);
-    shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10 , 0);
-    if (shmd < 0) {
-        printf("memory error: %s", strerror(errno));
-        return 1;
-    }
-
-    struct vehicle * cars = shmat(shmd, 0, 0);
-
 
     char start_date1[SEG_SIZE];
     char end_date1[SEG_SIZE];
     char car[SEG_SIZE];
     printf("\x1b[H\x1b[J");
     if (me.start_rent_day != 0){
-      printf("You are currently renting out a car!\n");
-      shmdt(cars);
+      printf("You are currently renting out a car! Please type \"back\" to go back to the main menu\n");
 
-      sb1.sem_op = 1;
-      semop(semd, &sb1, 1);
       printf("\n");
       return 1;
     }
@@ -54,8 +34,8 @@ int rent() {
     //   printf("Please enter the information in the correct format\n");
     //   shmdt(cars);
     //
-    //   sb1.sem_op = 1;
-    //   semop(semd, &sb1, 1);
+    //   sb[0].sem_op = 1;
+    //   semop(semd, &sb[0], 1);
     //   printf("\n");
     //   return 1;
     // }
@@ -79,6 +59,24 @@ int rent() {
     int start_date = start_month + start_day;
     int end_date = end_month + end_day;
     printf("\x1b[H\x1b[J");
+
+    sb[0].sem_num=0;
+    sb[0].sem_op = -1;
+    sb[0].sem_flg = SEM_UNDO;
+    semd = semget(SEMKEY, 1, 0);
+    if (semd < 0) {
+        printf("semaphore error: %s", strerror(errno));
+        return 1;
+    }
+    semop(semd, &sb[0], 1);
+    shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10 , 0);
+    if (shmd < 0) {
+        printf("memory error: %s", strerror(errno));
+        return 1;
+    }
+
+    struct vehicle * cars = shmat(shmd, 0, 0);
+
     printf("The following cars are available during those days:\n");
 
     int unit =0;
@@ -122,11 +120,11 @@ int rent() {
       }
     }
     if(no_cars){
-      printf("Sorry, no cars are availble during those days.\n");
+      printf("Sorry, no cars are availble during those days. Please type \"back\" to go back to the main menu\n");
       shmdt(cars);
 
-      sb1.sem_op = 1;
-      semop(semd, &sb1, 1);
+      sb[0].sem_op = 1;
+      semop(semd, &sb[0], 1);
       printf("\n");
       return 1;
     }
@@ -145,19 +143,23 @@ int rent() {
         } else if (strcmp(car, "back") == 0){
           shmdt(cars);
 
-          sb1.sem_op = 1;
-          semop(semd, &sb1, 1);
+          sb[0].sem_op = 1;
+          semop(semd, &sb[0], 1);
           printf("\n");
           //if user would like to cancel renting  car, go back to the menu screen
           return 1;
         }
       }
       if(chosen_car == NULL){
-        printf("Error: You've entered a model that does not exist in our database. Please type \"back\" to go back to the main menu\n");
-        shmdt(cars);
 
-        sb1.sem_op = 1;
-        semop(semd, &sb1, 1);
+        printf("Error: You've entered a model that does not exist in our database. Please type \"back\" to go back to the main menu\n");
+
+        if( shmdt(cars) == -1){
+	          printf("shmdt failed: segment wasn't dettached from data space");
+        }
+
+        sb[0].sem_op = 1;
+        semop(semd, &sb[0], 1);
         printf("\n");
         return 1;
       }
@@ -200,13 +202,15 @@ int rent() {
         printf("Insufficience funds, please type \"back\" to return to menu");
       }
     } else{
-      printf("Your purchase has been cancelled, please type \"back\"\n\n");
+      printf("Your purchase has been cancelled, please type \"back\" to return to menu\n\n");
     }
 
-    shmdt(cars);
+    if( shmdt(cars) == -1){
+        printf("shmdt failed: segment wasn't dettached from database");
+    }
 
-    sb1.sem_op = 1;
-    semop(semd, &sb1, 1);
+    sb[0].sem_op = 1;
+    semop(semd, &sb[0], 1);
     printf("\n");
     return 1;
 }

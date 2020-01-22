@@ -138,16 +138,16 @@ int makeUser() {
   }
   num_users += 1;
 
-  sb2.sem_num=0;
-  sb2.sem_op = -1;
-  //sb2.sem_flg = SEM_UNDO;
+  sb[1].sem_num=0;
+  sb[1].sem_op = -1;
+  sb[1].sem_flg = SEM_UNDO;
   // after username and passwords are confirmed, store username's other info in shared memory
   semd = semget(SEM2KEY, 1, 0);
   if (semd < 0) {
       printf("semaphore error: %s", strerror(errno));
       return 1;
   }
-  semop(semd, &sb2, 1);
+  semop(semd, &sb[1], 1);
   shmd = shmget(MEM2KEY, sizeof(struct users) * 100, 0);
   if (shmd < 0) {
       printf("memory error: %s", strerror(errno));
@@ -155,11 +155,6 @@ int makeUser() {
   }
 
   struct users * users = shmat(shmd, 0, 0);
-  user.userid = num_users;
-  user.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
-  user.balance = 10000;
-  strcpy(user.username,input);
-  users[num_users-1] = user;
 
   me.userid = num_users;
   me.rented = (struct vehicle){" ", " ", 0, 0, {0,0,0}};
@@ -169,7 +164,9 @@ int makeUser() {
   me.end_rent_month = 0;
   me.end_rent_day = 0;
   strcpy(me.username,input);
+  memcpy(&users[me.userid],&me,sizeof(struct users));
 
+  //printf("%d",users[me.userid].balance);
   //printf("%s\n",buffer);
   // if (strlen(buffer) != 0) {
   //   buffer[strlen(buffer)-1] = '\0';
@@ -197,8 +194,8 @@ int makeUser() {
 
   shmdt(users);
 
-  sb2.sem_op = 1;
-  semop(semd, &sb2, 1);
+  sb[1].sem_op = 1;
+  semop(semd, &sb[1], 1);
 
   close(fd);
   return 1;
@@ -241,16 +238,16 @@ int verifyUser() {
         *checker = '\0';
       }
       if(strcmp(input2, args[1]) == 0) {
-        sb2.sem_num=0;
-        sb2.sem_op =-1;
-        //sb2.sem_flg = SEM_UNDO;
+        sb[1].sem_num=0;
+        sb[1].sem_op =-1;
+        sb[1].sem_flg = SEM_UNDO;
         // after username and passwords are confirmed, store username's other info in shared memory
         semd = semget(SEM2KEY, 1, 0);
         if (semd < 0) {
             printf("semaphore error: %s", strerror(errno));
             return 1;
         }
-        semop(semd, &sb2, 1);
+        semop(semd, &sb[1], 1);
         shmd = shmget(MEM2KEY, sizeof(struct users) * 100, 0);
         if (shmd < 0) {
             printf("memory error: %s", strerror(errno));
@@ -259,15 +256,14 @@ int verifyUser() {
         struct users * users = shmat(shmd, 0, 0);
         // struct users * user = &users[idx];
         memcpy(&me,&users[idx],sizeof(struct users));
+        printf("%d", me.balance);
+        fgets(checker, 15, stdin);
         // strcpy(me.username, user->username);
         // me.userid = user->userid;
-        // me.rented = user->rented;
-        // me.balance = user->balance;
-
         shmdt(users);
 
-        sb2.sem_op = 1;
-        semop(semd, &sb2, 1);
+        sb[1].sem_op = 1;
+        semop(semd, &sb[1], 1);
         return 1;
       }
     }
@@ -279,16 +275,16 @@ int verifyUser() {
 }
 
 void logout() {
-  sb2.sem_num=0;
-  sb2.sem_op = -1;
-  //sb2.sem_flg = SEM_UNDO;
+  sb[1].sem_num=0;
+  sb[1].sem_op = -1;
+  sb[1].sem_flg = SEM_UNDO;
   // after username and passwords are confirmed, store username's other info in shared memory
   semd = semget(SEM2KEY, 1, 0);
   if (semd < 0) {
       printf("semaphore error: %s", strerror(errno));
       return;
   }
-  semop(semd, &sb2, 1);
+  semop(semd, &sb[1], 1);
   shmd = shmget(MEM2KEY, sizeof(struct users) * 100, 0);
   if (shmd < 0) {
       printf("memory error: %s", strerror(errno));
@@ -297,13 +293,14 @@ void logout() {
   struct users * users = shmat(shmd, 0, 0);
   // struct users * user = &users[me.userid];
   memcpy(&users[me.userid],&me,sizeof(struct users));
+  //printf("%d\n",users[me.userid].balance);
   // memcpy(&(user->rented), &me.rented, sizeof(struct vehicle));
   // memcpy(&(user->balance), &me.balance, sizeof(me.balance));
 
   shmdt(users);
 
-  sb2.sem_op = 1;
-  semop(semd, &sb2, 1);
+  sb[1].sem_op = 1;
+  semop(semd, &sb[1], 1);
   //memset(me.username, '\0', 20);
   printf("Please type in your choice from the options listed below:\n\n- Log in\n- Create new account\n- Exit\n\n");
 }

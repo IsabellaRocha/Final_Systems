@@ -53,10 +53,10 @@ struct users {
   int end_rent_month;
 };
 
-extern struct users me,user;
+extern struct users me;
 extern bool running;
-extern int semd, shmd, shmd2, fd; // desecriptors
-extern struct sembuf sb1,sb2;
+extern int semd, shmd, fd; // desecriptors
+extern struct sembuf sb[2];
 /*struct month {
   int numDays;
   struct day days[numDays];

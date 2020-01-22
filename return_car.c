@@ -1,16 +1,16 @@
 #include "headers.h"
 
 int return_car() {
-    sb1.sem_num = 0;
-    sb1.sem_op = -1;
-    //sb1.sem_flg = SEM_UNDO;
+    sb[0].sem_num = 0;
+    sb[0].sem_op = -1;
+    sb[0].sem_flg = SEM_UNDO;
 
     semd = semget(SEMKEY, 1, 0);
     if (semd < 0) {
         printf("semaphore error: %s", strerror(errno));
         return 1;
     }
-    semop(semd, &sb1, 1);
+    semop(semd, &sb[0], 1);
     shmd = shmget(MEMKEY, sizeof(struct vehicle) * 10, 0);
     if (shmd < 0) {
         printf("memory error: %s", strerror(errno));
@@ -39,10 +39,10 @@ int return_car() {
     int today_day = tm.tm_mday;
     bool pay = false;
     if (me.start_rent_day == 0){
-      printf("You have currently rented out zero cars!\n");
+      printf("You have currently rented out zero cars! Please type \"back\" to go back to the main menu\n");
       shmdt(cars);
-      sb1.sem_op = 1;
-      semop(semd, &sb1, 1);
+      sb[0].sem_op = 1;
+      semop(semd, &sb[0], 1);
       printf("\n");
       return 0;
     }
@@ -91,25 +91,27 @@ int return_car() {
         me.end_rent_month = 0;
         me.end_rent_day = 0;
       } else{
+        printf("Your return has been cancelled! Please type \"back\" to go back to the main menu\n");
         shmdt(cars);
 
-        sb1.sem_op = 1;
-        semop(semd, &sb1, 1);
+        sb[0].sem_op = 1;
+        semop(semd, &sb[0], 1);
         printf("\n");
         return 1;
       }
     } else {
+      printf("Your return has been cancelled! Please type \"back\" to go back to the main menu\n");
       shmdt(cars);
 
-      sb1.sem_op = 1;
-      semop(semd, &sb1, 1);
+      sb[0].sem_op = 1;
+      semop(semd, &sb[0], 1);
       printf("\n");
       return 1;
     }
-    printf("Thank you for using our service!\n");
+    printf("Thank you for using our service! Please type \"back\" to go back to the main menu\n");
     shmdt(cars);
-    sb1.sem_op = 1;
-    semop(semd, &sb1, 1);
+    sb[0].sem_op = 1;
+    semop(semd, &sb[0], 1);
     printf("\n");
     return 0;
 }
