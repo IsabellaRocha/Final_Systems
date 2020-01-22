@@ -8,8 +8,8 @@ Our project is a management system for a hypothetical car rental service. Users 
 #### User Interface: ####
 * The user will first be prompted with a login screen, asking them to either create a new account or log in to an existing account
 * Once either a new account is created or an account is logged into, the screen will then switch to a menu in which the user has the options to view available cars, view their account information, view when they have to return their car, return a car if they already have one in their possession, or log out.
-* If they choose to view available cars, They will be shown basic information about all cas we offer. They wil be they asked to specify during which days they will need to rent out a car. 
-* They will then be shown what cars are available on those days. They will be asked to choose a specific car to rent out, and prompt asking whether or not they are sure this is the car they want and alert them of the price before confirming the decision.
+* If they choose to view available cars, they will be shown basic information about all cars we offer. They will be then asked to specify during which days they will need to rent out a car. 
+* They will then be shown what cars are available on those days. They will be asked to choose a specific car to rent out, and prompt the user asking whether or not they are sure this is the car they want and alert them of the price before confirming the decision.
 * They may choose to rent it now, or reserve it for certain days.
 * They may also cancel that reserve by returning their cars earlier
 
