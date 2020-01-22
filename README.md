@@ -37,7 +37,7 @@ This project will utilize
 * When you are opening the program for the first time, please run make in order to compile all the files, and then run ./control -c in order to create the shared memory
 * After that, simply run make run and follow the prompts on the screen and enter responses in the requested format, separating dates by dash and making sure to type your inputs in all lower case except when typing in the car model: type that exactly as it appears on screen
 * If the instructions are not clear on what to do next after you've finished an operation, enter 'back' to return to the display menu
-* We recommend testing all the features, such as renting, returning, and viewing your account, within one log in session.
+* We recommend testing all the features, such as renting, returning, and viewing your account, within one log in session. The reasons why is elaborated on the bugs section at the bottom
 * If you format incorrectly and run into an error, you must remove the shared memory and semaphores using ./control -r, then restart the program
 
 ## Devlog ##
@@ -71,4 +71,4 @@ This project will utilize
   * Joseph: Fixed bugs
 
 ## Bugs ##
-* We have issue with shared memory after logging out. When we log out, we update the shared memory with the new information and we even print its value before detaching it. However, when we call the shared memory to access it, it seems to not have been updated, despite using the correct reading and writing shmflg. It's not a memory copying issue either, because we accurately get the username and we even printed the values before copying it over. All the features work within one session, however logging out doesn't seem to preserve the changes.
+* We have issue with shared memory. When we log out, we update the shared memory with the new information and we even print its value before detaching it. However, when we call the shared memory to access it, it seems to not have been updated, despite using the correct reading and writing shmflg. It's not a memory copying issue either, because we accurately get the username and we even printed the values before copying it over. This also applies to the shared memory we store regarding the vehicles. Although the bug is not as apparent because we prevent users from renting out more than one car. All the code and structure for renting is in place and has been tested with non-shared memory -- if three units of a car are taken up for a day during one of the days they need to rent a car, it will not be displayed as avaialable. However, when testing this with shared memory, even though we print the updated value before dettaching, we run into the same issue as logging out. Thus, we recommend testing all the features within one login session.
